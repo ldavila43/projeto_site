@@ -1,19 +1,8 @@
-import express, { Request, Response} from 'express';
+import express from 'express';
+import { criarUsuario } from '../controllers/UsersController'
 
 const router = express.Router();
 
-router
-    .route("/:id")
-    .get((req, res) => {
-        const id = req.params.id;
-        res.send(`Get user ${id}`);
-    })
-    .put((req, res) => {
-        res.send(`test`);
-    })
-    .delete((req, res) => {
-        res.send(`test`);
-    })
-
+router.post('/', criarUsuario);
 
 export default router;
