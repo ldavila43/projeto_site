@@ -1,7 +1,7 @@
-export default interface UsuarioDTO{
+export default interface CadastroDTO {
     nome: string,
-    dataNascimento: Date,
     documentoIdentificacao: string,
+    dataNascimento: Date,
     sexo: string,
     etnia: string,
     senha: string

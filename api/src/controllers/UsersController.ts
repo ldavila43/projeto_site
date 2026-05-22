@@ -4,8 +4,6 @@ import UsuarioDTO from '../models/UsuarioDTO'
 import ApiError from '../errors/ApiErrors'
 
 export async function criarUsuario(req: Request, res: Response) {
-    console.log("Cheguei aqui")
-
     const dadosUsuario: UsuarioDTO = req.body;
 
     try {
@@ -20,8 +18,6 @@ export async function criarUsuario(req: Request, res: Response) {
                 error: err.message
             })
         }
-
-        console.log('ERRO REAL CAPTURADO:', err);
 
         return res.status(500).json({
             error: 'Erro interno do servidor'

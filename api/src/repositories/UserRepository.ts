@@ -28,8 +28,8 @@ export async function criarConta(usuario: UsuarioModel){
             `,
             [
                 usuario.nome,
-                usuario.data_nascimento,
-                usuario.documento_identificacao,
+                usuario.dataNascimento,
+                usuario.documentoIdentificacao,
                 usuario.sexo,
                 usuario.etnia
             ]
@@ -54,7 +54,7 @@ export async function criarConta(usuario: UsuarioModel){
             `,
             [
                 id_operador,
-                usuario.senha_hash
+                usuario.senhaHash
             ]
         )
 
