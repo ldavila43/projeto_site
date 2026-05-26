@@ -1,7 +1,7 @@
 import pool from '../config/DatabaseConfig';
 import UsuarioModel from '../models/UsuarioModel'
 
-export async function buscaPorCpf(cpf: string) {
+export async function buscaPorCpf(documento: string) {
     const busca = await pool.query(
         `
             select exists (
@@ -10,7 +10,7 @@ export async function buscaPorCpf(cpf: string) {
                 where documento_identificacao = $1
         ) as existe
         `,
-        [cpf]
+        [documento]
     )
 
     return busca.rows[0].existe;
@@ -58,6 +58,17 @@ export async function criarConta(usuario: UsuarioModel){
             ]
         )
 
+        await client.query(
+            `
+                insert into operadores_perfis(id_operador, id_perfil)
+                values($1, $2)
+            `,
+            [
+                id_operador,
+                0
+            ]
+        )
+
         await client.query('COMMIT')
 
         return true;
@@ -68,4 +79,33 @@ export async function criarConta(usuario: UsuarioModel){
     } finally {
         client.release()
     }
+}
+
+export async function buscarCredenciaisPorDocumento(documento: string) {
+    const busca = await pool.query(
+        `
+            select
+                pessoas.id_pessoa,
+                operadores_credenciais.senha_hash as senha_hash,
+                array_agg(operadores_perfis.id_perfil) as perfis,
+                pessoas.nome as nome,
+                operadores.*
+            from pessoas
+            join operadores
+                on operadores.id_pessoa = pessoas.id_pessoa
+            join operadores_credenciais
+                on operadores_credenciais.id_operador = operadores.id_operador
+            join operadores_perfis
+                on operadores_perfis.id_operador = operadores.id_operador
+            where pessoas.documento_identificacao = $1
+            group by
+                pessoas.id_pessoa,
+                operadores.id_operador,
+                operadores_credenciais.senha_hash,
+                pessoas.nome
+        `,
+        [documento]
+    );
+
+    return busca.rows[0]
 }

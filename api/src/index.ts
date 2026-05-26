@@ -3,7 +3,9 @@ import cors from 'cors';
 import authRouter from './routers/auth';
 import usersRouter from './routers/users';
 import pool from './config/DatabaseConfig'
+import dotenv from 'dotenv'
 
+dotenv.config();
 
 const app = express();
 app.use(cors());

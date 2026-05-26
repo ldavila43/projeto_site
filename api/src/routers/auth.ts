@@ -1,10 +1,12 @@
-import express, { Request, Response} from 'express';
+import { Router } from 'express';
+import { realizarLogin } from '../controllers/AuthController';
+import { tokenInterceptor } from '../interceptors/Interceptor';
 
-const router = express.Router();
+const router = Router();
 
-router.post("/login", (req, res) => {
-    const respostaForm = JSON.stringify(req.body)
-})
+router.post('/login', realizarLogin)
+
+router.get('/dashboard/dados', tokenInterceptor)
 
 
 export default router;
