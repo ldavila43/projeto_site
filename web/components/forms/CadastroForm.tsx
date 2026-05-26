@@ -1,109 +1,117 @@
 'use client';
-import { useState, useEffect } from 'react';
-import CadastroDTO from '@/DTO/CadastroDTO'
-import { validarCadastro } from '@/utils/ValidacoesCadastro'
+import { useState } from 'react';
+import CadastroDTO from '@/DTO/CadastroDTO';
+import FormDTO from '@/DTO/FormDTO';
+import { validarCadastro } from '@/utils/ValidacoesCadastro';
 import { registrarUsuario } from '@/services/UserService';
-import Input from '@/components/ui/Input'
+import Input from '@/components/ui/Input';
+import Button from '@/components/ui/button';
 
 export default function CadastroForm() {
-    const [formData, setFormData] = useState<CadastroDTO>({
+    const [formData, setFormData] = useState<FormDTO>({
         nome: '',
-        dataNascimento: new Date(),
+        dataNascimento: '',
         documentoIdentificacao: '',
         sexo: '',
         etnia: '',
-        senha: ''
+        senha: '',
+        confirmarSenha: ''
     });
 
-    function handleChange(
-        e: React.ChangeEvent<HTMLInputElement>
-    ) {
-        const { name, value } = e.target;
+    const [submited, setSubmitted] = useState(false);
 
-        setFormData({
-            ...formData,
-            [name]: value
-        });
+    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
     }
 
-    async function enviarCadastro() {
+    async function enviarCadastro(e: { preventDefault : () => void }) {
+        e.preventDefault();
         try {
-        const cadastro: CadastroDTO = formData;
-
-        const valido = validarCadastro(cadastro);
-
-        const mensagem = await registrarUsuario(cadastro);
-
-        setFormData({
-            nome: '',
-            dataNascimento: new Date(),
-            documentoIdentificacao: '',
-            sexo: '',
-            etnia: '',
-            senha: ''
-        })
-
-        alert (mensagem)
-
+            setSubmitted(true);
+            const cadastro: CadastroDTO = validarCadastro(formData);
+            
+            const mensagem: string = await registrarUsuario(cadastro);
+            setFormData({
+                nome: '',
+                dataNascimento: '',
+                documentoIdentificacao: '',
+                sexo: '',
+                etnia: '',
+                senha: '',
+                confirmarSenha: ''
+            });
+            alert(mensagem);
         } catch (erro) {
-            if (erro instanceof Error) {
-                alert(erro.message)
-            } else {
-                alert ('Erro inesperado!')
-            }
+            alert(
+                erro instanceof Error
+                    ? erro.message
+                    : 'Erro inesperado!'
+                );
         }
     }
 
     return (
-        <main>
-            <div>
-                <h1>Criar nova conta</h1>
-                Nome: <Input
-                    name="nome"
-                    value={formData.nome}
-                    onChange={handleChange}
-                />
-                <br />
-                CPF: <Input
-                    name="documentoIdentificacao"
-                    value={formData.documentoIdentificacao}
-                    onChange={handleChange}
-                />
-                <br />
-                Sexo: <Input
-                    name="sexo"
-                    value={formData.sexo}
-                    onChange={handleChange}
-                />
-                <br />
-                Etnia: <Input
-                    name="etnia"
-                    value={formData.etnia}
-                    onChange={handleChange}
-                />
-                <br />
-                Senha: <Input
-                    name="senha"
-                    value={formData.senha}
-                    onChange={handleChange}
-                />
-                <br />
-                Data de Nascimento: <Input
-                    className="mt-4"
+        <form
+        onSubmit={enviarCadastro}
+        className="w-full p-8 rounded-2xl shadow-lg flex flex-col gap-4"
+        >
+            <h1 className="text-2xl font-bold text-center">Criar nova conta</h1>
+
+            <label className="flex flex-col gap-1 required">
+                <span>
+                    Nome<span className="text-red-500">* </span>:
+                </span>
+                <Input required name="nome" className={submited && !formData.nome ? 'border-red-500': ''} value={formData.nome} onChange={handleChange} />
+            </label>
+
+            <label className="flex flex-col gap-1">
+                <span>
+                    Data de Nascimento<span className="text-red-500">* </span>:
+                </span>
+                <Input
+                    required
+                    name="dataNascimento"
                     type="date"
-                    value={formData.dataNascimento
-                        .toISOString()
-                        .split('T')[0]}
-                    onChange={(e) =>
-                        setFormData({
-                            ...formData,
-                            dataNascimento: new Date(e.target.value)
-                        })
-                    }
+                    value={formData.dataNascimento}
+                    onChange={handleChange}
                 />
-                <br />
-                <button onClick={enviarCadastro}>Criar Conta</button>
-            </div>
-        </main>
+            </label>
+
+            <label className="flex flex-col gap-1">
+                <span>
+                    Documento<span className="text-red-500">* </span>:
+                </span>
+            <Input required name="documentoIdentificacao" className={submited && !formData.documentoIdentificacao ? 'border-red-500': ''} value={formData.documentoIdentificacao} onChange={handleChange} />
+            </label>
+
+            <label className="flex flex-col gap-1">
+            Sexo:
+            <select name="sexo" value={formData.sexo} onChange={handleChange}>
+                <option value="Masculino"> Masculino</option>
+                <option value="Feminino">Feminino</option>
+            </select>
+            </label>
+
+            <label className="flex flex-col gap-1">
+            Etnia:
+            <Input name="etnia" value={formData.etnia} onChange={handleChange} />
+            </label>
+
+            <label className="flex flex-col gap-1">
+                <span>
+                    Senha<span className="text-red-500">* </span>:
+                </span>
+            <Input required name="senha" className={submited && !formData.senha ? 'border-red-500': ''} type="password" value={formData.senha} onChange={handleChange} />
+            </label>
+
+            <label className="flex flex-col gap-1">
+                <span>
+                    Confirmar senha<span className="text-red-500">* </span>:
+                </span>
+            <Input required name="confirmarSenha" className={submited && !formData.confirmarSenha ? 'border-red-500': ''} type="password" value={formData.confirmarSenha} onChange={handleChange} />
+            </label>
+            <Button type="submit">Criar Conta</Button>
+        </form>
     );
 }

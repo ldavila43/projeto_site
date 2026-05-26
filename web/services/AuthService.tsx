@@ -1,10 +1,11 @@
-import CadastroDTO from '@/DTO/CadastroDTO';
+import LoginDTO from '@/DTO/LoginDTO'
 
-const url_usuarios = process.env.NEXT_PUBLIC_URL_BACKEND_USERS!;
+const url_auth = process.env.NEXT_PUBLIC_URL_BACKEND_LOGIN!;
 
-export async function registrarUsuario(dados: CadastroDTO) {
+export async function enviarLogin(dados: LoginDTO) {
     const response = await fetch(
-        url_usuarios,{
+        url_auth,
+        {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -12,9 +13,8 @@ export async function registrarUsuario(dados: CadastroDTO) {
             body: JSON.stringify(dados)
         }
     );
-
-    let result;
-    try{
+    let result
+    try {
         result = await response.json();
     } catch {
         result = null;
@@ -24,5 +24,5 @@ export async function registrarUsuario(dados: CadastroDTO) {
             typeof result === "string" ? result : result?.error || "Erro desconhecido"
         );
     }
-    return result?.message;
+    return result?.token;
 }
