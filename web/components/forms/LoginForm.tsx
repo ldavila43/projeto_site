@@ -68,14 +68,14 @@ export default function LoginForm() {
 
             <label className="flex flex-col gap-1 required">
                 <span>
-                    Documento de Identificação<span className="text-red-500">* </span>:
+                    Usuario:
                 </span>
                 <Input required name="documentoIdentificacao" className={submited && !formData.documentoIdentificacao ? 'border-red-500': ''} value={formData.documentoIdentificacao} onChange={handleChange} />
             </label>
 
             <label className="flex flex-col gap-1">
                 <span>
-                    Senha<span className="text-red-500">* </span>:
+                    Senha:
                 </span>
             <Input required name="senhaLogin" type='password' className={submited && !formData.senhaLogin ? 'border-red-500': ''} value={formData.senhaLogin} onChange={handleChange} />
             </label>

@@ -8,6 +8,7 @@ export async function actionLogin(dados: LoginDTO): Promise<{ sucesso: boolean; 
     try{
         const cookieStore = await cookies();
         const token = await enviarLogin(dados);
+        console.log(token);
         cookieStore.set('session', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -32,4 +33,10 @@ export async function actionLogin(dados: LoginDTO): Promise<{ sucesso: boolean; 
             mensagem: 'Erro Desconhecido'
         };
     }
+}
+
+export async function actionLogout() {
+    const cookieStore = await cookies();
+    cookieStore.delete('session');
+    return true;
 }
