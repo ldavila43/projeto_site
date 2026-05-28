@@ -23,7 +23,7 @@ export async function autenticarUsuario(dados: OperadorDTO) {
     }
 
     const payload: PayloadUsuario = {
-        id: usuario.id_operador,
+        id: usuario.id_pessoa,
         nome: usuario.nome,
         perfis: usuario.perfis
     }

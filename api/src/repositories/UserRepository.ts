@@ -87,7 +87,7 @@ export async function buscarCredenciaisPorDocumento(documento: string) {
             select
                 pessoas.id_pessoa,
                 operadores_credenciais.senha_hash as senha_hash,
-                array_agg(operadores_perfis.id_perfil) as perfis,
+                array_agg(perfis.id_perfil) as perfis,
                 pessoas.nome as nome,
                 operadores.*
             from pessoas
@@ -97,6 +97,8 @@ export async function buscarCredenciaisPorDocumento(documento: string) {
                 on operadores_credenciais.id_operador = operadores.id_operador
             join operadores_perfis
                 on operadores_perfis.id_operador = operadores.id_operador
+            join perfis
+                on operadores_perfis.id_perfil = perfis.id_perfil
             where pessoas.documento_identificacao = $1
             group by
                 pessoas.id_pessoa,

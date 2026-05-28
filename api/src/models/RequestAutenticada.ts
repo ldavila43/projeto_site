@@ -8,5 +8,5 @@ export interface PayloadUsuario {
 }
 
 export interface RequestComUsuario extends Request {
-    usuarioLogado?: PayloadUsuario;
+    usuarioLogado: PayloadUsuario;
 }
