@@ -16,6 +16,7 @@ export default function Header() {
     const perfisParaExibir =
     definirPerfis(perfisDisponiveis);
 
+
     const nomePerfil =
         perfilAtivo !== null
         ? PERFIS_INFO[perfilAtivo].nome
@@ -31,9 +32,12 @@ export default function Header() {
                 </button>
             </div>
             <div>
-                <select value={perfilAtivo ?? ''} onChange={e => contexto.alterarPerfil(e.target.value)}>
+                <select
+                    key={perfilAtivo}
+                    value={String(perfilAtivo ?? '')}
+                    onChange={e => contexto.alterarPerfil(e.target.value)}>
                     {perfisParaExibir.map((perfil) => (
-                        <option key={perfil} value={perfil}>{PERFIS_INFO[perfil].nome}</option>
+                        <option key={perfil} value={String(perfil)}>{PERFIS_INFO[perfil].nome}</option>
                     ))}
                 </select>
             </div>

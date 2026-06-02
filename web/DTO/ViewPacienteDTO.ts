@@ -1,12 +1,17 @@
-export interface ViewPacienteDTO {
-    totalExames: number,
-    examesConcluidos: number,
-    examesRecentes: Exame[]
-}
 
-export interface Exame {
+export interface Exames{
     protocolo: string,
     tipoExame: string,
     status: string,
     dataSolicitacao: Date
+}
+
+export interface Estatisticas{
+    total: number,
+    concluidos: number
+}
+
+export interface DashPacientesDTO{
+    estatisticas: Estatisticas
+    exames: Exames[]
 }

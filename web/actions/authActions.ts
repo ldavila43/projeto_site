@@ -2,13 +2,13 @@
 import { cookies } from 'next/headers'
 import { enviarLogin } from '@/services/AuthService'
 import LoginDTO from '@/DTO/LoginDTO'
+import { redirect } from 'next/navigation';
 
 
 export async function actionLogin(dados: LoginDTO): Promise<{ sucesso: boolean; mensagem?: string }> {
     try{
         const cookieStore = await cookies();
         const token = await enviarLogin(dados);
-        console.log(token);
         cookieStore.set('session', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -38,5 +38,5 @@ export async function actionLogin(dados: LoginDTO): Promise<{ sucesso: boolean; 
 export async function actionLogout() {
     const cookieStore = await cookies();
     cookieStore.delete('session');
-    return true;
+    redirect('/login')
 }

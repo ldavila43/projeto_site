@@ -26,8 +26,8 @@ export default function Dashboard() {
             ? views[context.perfilAtivo]
             : ViewPaciente;
     return (
-        <div>
-            <div className={'font-sans text-xl'}>Olá {context.nome}</div>
+        <div className={'flex flex-col w-full max-w-6xl mx-auto p-6 font-sans text-xl'}>
+            <span className={'text-2xl font-bold'}>Olá {context.nome.split(' ')[0]}!</span>
             <Component />
         </div>
     )

@@ -1,10 +1,11 @@
 import LoginDTO from '@/DTO/LoginDTO'
 
-const url_auth = process.env.NEXT_PUBLIC_URL_BACKEND_LOGIN!;
 
 export async function enviarLogin(dados: LoginDTO) {
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
+    const url = new URL('/auth/login', baseUrl);
     const response = await fetch(
-        url_auth,
+        url,
         {
             method: 'POST',
             headers: {
@@ -16,8 +17,8 @@ export async function enviarLogin(dados: LoginDTO) {
     let result
     try {
         result = await response.json();
-    } catch {
-        result = null;
+    } catch(erro) {
+        throw new Error('Resposta inválida do servidor');
     }
     if (!response.ok) {
         throw new Error(

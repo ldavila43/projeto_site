@@ -17,7 +17,7 @@ export async function registrarUsuario(dados: CadastroDTO) {
     try{
         result = await response.json();
     } catch {
-        result = null;
+        throw new Error('Resposta inválida do servidor');
     }
     if (!response.ok) {
         throw new Error(

@@ -44,7 +44,6 @@ export default function LoginForm() {
                 senhaLogin: ''
             });
             setSubmitted(false);
-
             alert(mensagem.mensagem);
             return
         }
