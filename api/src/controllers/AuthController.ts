@@ -13,7 +13,6 @@ export async function realizarLogin(req: Request, res: Response) {
             token: token
         })
     } catch(err) {
-        console.log(err)
         if (err instanceof ApiError) {
             return res.status(err.statusCode).json({
                 error: err.message
