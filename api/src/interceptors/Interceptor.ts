@@ -47,3 +47,25 @@ function validaPayload(payload: PayloadUsuario) {
     }
     return true;
 }
+
+export function autorizacaoInterceptor(perfisPermitidos:number[]) {
+    return function (req: RequestComUsuario, res: Response, next: NextFunction) {
+    const perfis = req.usuarioLogado.perfis;
+
+    if (!perfis) {
+        return res.status(401).json({
+            error:'Usuario não autenticado'
+        })
+    }
+
+    const passa = perfis.some(valor => perfisPermitidos.includes(valor));
+
+    if (!passa) {
+        return res.status(403).json({
+            error: 'Acesso inválido'
+        })
+    }
+
+    next();
+    }
+}
