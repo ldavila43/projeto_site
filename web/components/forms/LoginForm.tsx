@@ -35,9 +35,7 @@ export default function LoginForm() {
             alert(validacaoLogin.mensagem);
             return
         }
-        
         const mensagem = await actionLogin(formData);
-
         if (!mensagem.sucesso) {
             setFormData({
                 documentoIdentificacao: formData.documentoIdentificacao,
@@ -47,14 +45,11 @@ export default function LoginForm() {
             alert(mensagem.mensagem);
             return
         }
-
         setFormData({
             documentoIdentificacao: '',
             senhaLogin: ''
         });
-        
         setSubmitted(false);
-
         router.push('/dashboard');
     }
 

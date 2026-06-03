@@ -4,8 +4,6 @@ import { DashPacientesDTO } from '@/DTO/ViewPacienteDTO';
 import { DashAdminDTO } from '@/DTO/ViewAdminDTO';
 import { DashProfissionaisDTO } from '@/DTO/ViewProfissionaisDTO'
 import { servicoDashboard, servicoDashboardProfissional, servicoDashboardAdmin } from '@/services/DashService';
-import { actionLogout } from '@/actions/authActions'
-
 
 export async function buscarDadosPacientes(): Promise<DashPacientesDTO> {
     const cookieStore = await cookies();

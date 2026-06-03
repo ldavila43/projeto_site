@@ -9,18 +9,19 @@ import { AuthContext } from '@/contexts/AuthContext';
 const MENU_POR_PERFIL: Record<number, { label: string; href: string}[]> = {
     [PERFIS.PACIENTE]: [
         { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Exames', href: '/dashboard/exames' }
+        { label: 'Exames', href: '/exames' }
     ],
     [PERFIS.PROFISSIONAL_SAUDE]: [
         { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Pacientes', href: '/dashboard/pacientes' },
-        { label: 'Nova Análise', href: '/dashboard/analise' }
+        { label: 'Pacientes', href: '/pacientes' },
+        { label: 'Nova Análise', href: '/analise' }
     ],
     [PERFIS.ADMIN]: [
         { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Exames', href: '/dashboard/exames' },
-        { label: 'Pacientes', href: '/dashboard/pacientes' },
-        { label: 'Nova Análise', href: '/dashboard/analise' }
+        { label: 'Cadastros', href: '/cadastros' },
+        { label: 'Exames', href: '/exames' },
+        { label: 'Pacientes', href: '/pacientes' },
+        { label: 'Nova Análise', href: '/analise' }
     ]
 };
 

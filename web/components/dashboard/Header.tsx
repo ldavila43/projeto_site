@@ -3,19 +3,36 @@
 import { PERFIS_INFO } from '@/utils/PerfisEnum';
 import { definirPerfis } from '@/utils/PerfisDashboard';
 import { useContext } from 'react';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { actionLogout } from '@/actions/authActions';
 import { AuthContext } from '@/contexts/AuthContext';
 
+const rotasPorPerfil = {
+    0: '/dashboard/admin',
+    1: '/dashboard/profissional',
+    2: '/dashboard/colaborador',
+    3: '/dashboard/paciente'
+} as const;
+
 export default function Header() {
     const contexto = useContext(AuthContext);
-    const abaAtual = usePathname();
+    const router = useRouter();
     if (!contexto) return null;
     const { nome, perfilAtivo, perfisDisponiveis } = contexto;
 
     const perfisParaExibir =
     definirPerfis(perfisDisponiveis);
 
+    function handleTrocaPerfil(novoPerfil: string) {
+        if(!contexto) {
+            router.replace('/login');
+            return null;
+        };
+        contexto.alterarPerfil(novoPerfil);
+        const idRota = Number(novoPerfil)
+        const novaRota = rotasPorPerfil[idRota as keyof typeof rotasPorPerfil];
+        router.push(novaRota)
+    }
 
     const nomePerfil =
         perfilAtivo !== null
@@ -35,7 +52,9 @@ export default function Header() {
                 <select
                     key={perfilAtivo}
                     value={String(perfilAtivo ?? '')}
-                    onChange={e => contexto.alterarPerfil(e.target.value)}>
+                    onChange={e => {
+                        handleTrocaPerfil(e.target.value)
+                    }}>
                     {perfisParaExibir.map((perfil) => (
                         <option key={perfil} value={String(perfil)}>{PERFIS_INFO[perfil].nome}</option>
                     ))}
