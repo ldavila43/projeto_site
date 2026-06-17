@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import authRouter from './routers/auth';
-import usersRouter from './routers/users';
-import dashboardRouter from './routers/dashboard'
-import pool from './config/DatabaseConfig'
-import dotenv from 'dotenv'
+import authRouter from './modules/auth/auth';
+import usersRouter from './modules/usuarios/users';
+import examesRouter from './modules/exames/exames';
+import pacientesRouter from './modules/pacientes/pacientes';
+import dashboardRouter from './modules/dashboard/dashboard';
+import pool from './config/DatabaseConfig';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -17,6 +19,10 @@ app.use('/auth', authRouter);
 app.use('/users', usersRouter);
 
 app.use ('/dashboard', dashboardRouter);
+
+app.use('/exames', examesRouter)
+
+app.use('/pacientes', pacientesRouter)
 
 iniciarServidor();
 

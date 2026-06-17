@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken';
-import { PayloadUsuario, RequestComUsuario } from '../models/RequestAutenticada';
+import { PayloadUsuario, RequestComUsuario } from '../modules/auth/RequestAutenticada';
 
 export function tokenInterceptor(req: RequestComUsuario, res: Response, next: NextFunction) {
     const authorization = req.header('authorization');

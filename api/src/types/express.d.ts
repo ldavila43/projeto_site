@@ -1,4 +1,4 @@
-import { PayloadUsuario } from '../models/RequestAutenticada'
+import { PayloadUsuario } from '../modules/auth/RequestAutenticada'
 
 declare global {
     namespace Express {
