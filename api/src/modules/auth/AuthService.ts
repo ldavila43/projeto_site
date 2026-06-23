@@ -1,4 +1,4 @@
-import { buscarCredenciaisPorDocumento } from '../usuarios/UserRepository';
+import { buscarCredenciaisPorDocumento } from '../cadastro/UserRepository';
 import ApiErrors from '../../errors/ApiErrors';
 import bcrypt from 'bcrypt';
 import {OperadorDTO} from './OperadorDTO';
@@ -7,10 +7,6 @@ import { PayloadUsuario } from './RequestAutenticada';
 
 export async function autenticarUsuario(dados: OperadorDTO) {
     const usuario = await buscarCredenciaisPorDocumento(dados.documentoIdentificacao);
-
-    // if(usuario == null || !await verificarSenha(dados.senhaLogin, usuario.senha_hash)) {
-    //     throw new ApiErrors(401, 'Credenciais inválidas');
-    // }
 
     if(usuario == null) {
         throw new ApiErrors(401, 'Credenciais inválidas');

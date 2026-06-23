@@ -2,7 +2,8 @@ export interface Exames {
     idExame: number,
     protocolo: string,
     nomePaciente: string,
-    tipoExame: string
+    tipoExame: string,
+    categoriaExame: number,
     documentoPaciente: string,
     nomeProfissional: string,
     dataSolicitacao: Date,

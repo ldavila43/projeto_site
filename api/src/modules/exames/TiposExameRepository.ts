@@ -1,5 +1,5 @@
 import pool from '../../config/DatabaseConfig'
-import { TiposExameDTO, TiposExameResponse } from '../resultados/DTO/TiposExameDTO'
+import { TiposExameDTO, TiposExameResponse } from './resultados/DTO/TiposExameDTO'
 
 
 export async function buscaTipoExameNome(nome: string): Promise<TiposExameResponse> {

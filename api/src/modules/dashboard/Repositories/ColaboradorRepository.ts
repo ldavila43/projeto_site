@@ -91,9 +91,9 @@ export async function buscaEstatisticasTipoExame(dataIni?: Date, dataFim?: Date,
             exames.data_emissao between coalesce($1, to_date('01/01/1900', 'dd/mm/yyyy')) and coalesce($2, current_date)
         group by
             tipos_exame.descricao,
-            tipos_exame.id_tipo_exame;
+            tipos_exame.id_tipo_exame
         order by count(*)
-        limit coalesce($3, 5)
+        limit coalesce($3, 5);
         `, [dataIni, dataFim, limite]
     )
     const tiposExames: TiposExame[] = busca.rows.map(
