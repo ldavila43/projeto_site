@@ -1,4 +1,22 @@
-
+export interface ReqCadastroDTO {
+    nome: string,
+    documentoIdentificacao: string,
+    nascimento: string,
+    email: string,
+    telefone: string,
+    tipoContato: string,
+    cep: string,
+    logradouro: string,
+    numero: string,
+    bairro: string,
+    idCidade: number,
+    tipoEndereco: string,
+    estadoCivil?: string,
+    profissao?: string,
+    complemento?: string,
+    sexo?: string,
+    etnia?: string,
+}
 
 export interface PacienteDTO{
     idPessoa: string,
