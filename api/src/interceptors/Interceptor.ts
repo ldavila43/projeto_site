@@ -69,3 +69,25 @@ export function autorizacaoInterceptor(perfisPermitidos:number[]) {
     next();
     }
 }
+
+export function autorizacaoPerfilInterceptor(req: Request, res: Response, next: NextFunction) {
+    const perfis = req.usuarioLogado?.perfis;
+    const perfilAtivo = typeof req.headers['x-perfil-ativo'] === 'string' 
+        ? Number(req.headers['x-perfil-ativo'])
+        : undefined;
+
+    if (!perfis) {
+        return res.status(401).json({
+            error:'Usuario não autenticado'
+        })
+    }
+
+    if (perfilAtivo === undefined) {
+        return res.status(400).json({ error: 'Perfil ativo não informado no cabeçalho' });
+    }
+    if(!perfis.includes(perfilAtivo) && !perfis.includes(0)) {
+        return res.status(403).json({ error: 'Acesso inválido para este perfil' });
+    }
+    req.perfilAtivo = perfilAtivo;
+    next();
+}
