@@ -1,33 +1,7 @@
-'use client'
-
-import { useState, useEffect } from 'react';
 import Card from '@/components/ui/Card';
-import { buscarDadosPacientes } from '@/actions/dashBoardActions';
-import { DashPacientesDTO } from '@/DTO/ViewPacienteDTO'
+import { DashPacientesDTO } from '@/models/ViewPacienteDTO'
 
-export function ViewPaciente() {
-    const [dados, setDados] = useState<DashPacientesDTO | null>(null);
-    const [carregando, setCarregando] = useState(true);
-
-    useEffect(() => {
-        async function carregarDados() {
-            try {
-                const resultado: DashPacientesDTO = await buscarDadosPacientes();
-                setDados(resultado);
-            } catch (error) {
-                console.error("Erro ao buscar dados:", error);
-            } finally {
-                setCarregando(false);
-            }
-        }
-        
-        carregarDados();
-    }, []);
-
-    if (carregando) {
-        return <div>Carregando estatísticas...</div>;
-    }
-
+export function ViewPaciente({ dados }: {dados: DashPacientesDTO}) {
     return (
         <div>
             <span className='py-3 text-gray-600 text-base'>Acompanhe seus exames, incluindo os pendentes de aprobação no laboratório e os laudos já liberados para dowload</span>

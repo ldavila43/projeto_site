@@ -3,15 +3,16 @@ import { GraficoBarrasEmpilhadas } from '@/components/ui/GraficoBarrasEmpilhadas
 import { useState, useEffect } from 'react';
 import Card from '@/components/ui/Card';
 import { buscarDadosProfissionais } from '@/actions/dashBoardActions';
-import { DashProfissionaisDTO } from '@/DTO/ViewProfissionaisDTO'
+import { DashProfissionaisDTO } from '@/models/ViewProfissionaisDTO'
 import { transformarExamesParaGrafico } from '@/utils/transformarExames'
 
 export function ViewProfissional() {
     const [dados, setDados] = useState<DashProfissionaisDTO | null>(null);
     const [carregando, setCarregando] = useState(true);
     const [idPaciente, setIdPaciente] = useState();
-    const [dadosTransformados, setDadosTransformados] = useState<any[]>([]);
-    const [tiposUnicos, setTiposUnicos] = useState<string[]>([]);
+    const { dadosTransformados, tiposUnicos } = dados
+        ? transformarExamesParaGrafico(dados.exames)
+        : { dadosTransformados: [], tiposUnicos: [] };
     const [dataIni, setDataIni] = useState(
         new Date(new Date().getFullYear(), 0, 1)
             .toISOString()
@@ -28,9 +29,6 @@ export function ViewProfissional() {
             try {
                 const resultado: DashProfissionaisDTO = await buscarDadosProfissionais(idPaciente, dataIni, dataFim);
                 setDados(resultado);
-                const { dadosTransformados, tiposUnicos} = transformarExamesParaGrafico(resultado.exames)
-                setDadosTransformados(dadosTransformados)
-                setTiposUnicos(tiposUnicos)
             } catch (error) {
                 console.error("Erro ao buscar dados:", error);
             } finally {
@@ -75,8 +73,8 @@ export function ViewProfissional() {
                         <input
                             id="data-ini"
                             type="date"
-                            value={dataIni}
-                            onChange={(e) => setDataIni(e.target.value)}
+                            defaultValue={dataIni}
+                            onBlur={(e) => setDataIni(e.target.value)}
                             className="border border-gray-300 rounded-md p-1.5 text-sm"
                         >
                         </input>
@@ -84,8 +82,8 @@ export function ViewProfissional() {
                         <input
                             id="data-fim"
                             type="date"
-                            value={dataFim}
-                            onChange={(e) => setDataFim(e.target.value)}
+                            defaultValue={dataFim}
+                            onBlur={(e) => setDataFim(e.target.value)}
                             className="border border-gray-300 rounded-md p-1.5 text-sm"
                         >
                         </input>

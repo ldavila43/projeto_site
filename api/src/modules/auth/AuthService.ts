@@ -1,4 +1,4 @@
-import { buscarCredenciaisPorDocumento } from '../cadastro/UserRepository';
+import { buscarCredenciaisPorDocumento } from '../cadastro/userRepository';
 import ApiErrors from '../../errors/ApiErrors';
 import bcrypt from 'bcrypt';
 import {OperadorDTO} from './OperadorDTO';

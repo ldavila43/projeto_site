@@ -1,6 +1,6 @@
 import { RequestExames } from './DTO/RequestExamesDTO';
 import { Request, Response } from 'express';
-import { buscaVisaoGeral } from './ResultadosService'
+import { buscaVisaoGeral } from './resultadosService'
 
 export async function getDadosPainel(req: Request, res: Response) {
     try {

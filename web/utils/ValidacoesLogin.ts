@@ -1,4 +1,4 @@
-import LoginDTO from '@/DTO/LoginDTO';
+import LoginDTO from '@/models/LoginDTO';
 
 export function validarLogin (dados: LoginDTO): {valido:boolean, mensagem?:string} {
 

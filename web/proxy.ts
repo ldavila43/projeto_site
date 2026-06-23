@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const publicRoutes: string[] = ['/login', '/register', '/']
+const publicRoutes: string[] = ['/login', '/register', '/', '']
 
 const regrasDeAcesso: Record<string, number[]> = {
     '/dashboard/admin': [0],
@@ -65,6 +65,7 @@ export const config = {
         '/login',
         '/dashboard/:path*',
         '/cadastros/:path*',
-        '/exames/:path*'
+        '/exames/:path*',
+        '/pacientes/:path*'
     ]
 };

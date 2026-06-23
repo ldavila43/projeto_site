@@ -1,9 +1,9 @@
 'use client'
-import { PerfilID } from '@/utils/PerfisEnum'
-import UserContextDTO from '@/DTO/UserContextDTO';
+import { PerfilID } from '@/utils/PerfisEnum';
+import UserContextDTO from '@/models/UserContextDTO';
 import { useEffect, useState, createContext } from 'react';
-import AuthContextDTO from '@/DTO/AuthContextDTO';
-
+import AuthContextDTO from '@/models/AuthContextDTO';
+import { actionAlterarPerfil } from '@/actions/authActions';
 type Props = {
     children: React.ReactNode,
     initialData: UserContextDTO
@@ -19,7 +19,7 @@ export function AuthProvider({ children, initialData }: Props) {
     }, [initialData.perfilAtivo]);
 
 
-    function alterarPerfil(novoPerfil: string) {
+    async function alterarPerfil(novoPerfil: string) {
         const perfil = Number(novoPerfil);
 
         if (Number.isNaN(perfil)) {
@@ -27,6 +27,9 @@ export function AuthProvider({ children, initialData }: Props) {
         }
 
         setPerfilAtivo(perfil as PerfilID);
+
+        'trocando perfil'
+        await actionAlterarPerfil(novoPerfil)
     }
     return (
         <AuthContext.Provider

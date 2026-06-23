@@ -1,6 +1,6 @@
 import { Router, RequestHandler } from 'express';
-import { tokenInterceptor, autorizacaoInterceptor, autorizacaoPerfilInterceptor } from '../../interceptors/Interceptor';
-import { getPacientes, postPacientes } from './PacientesController'
+import { tokenInterceptor, autorizacaoPerfilInterceptor } from '../../interceptors/Interceptor';
+import { getPacientes, postPacientes } from './pacientesController'
 
 const router = Router();
 
@@ -9,13 +9,13 @@ router.get(
     tokenInterceptor as RequestHandler,
     autorizacaoPerfilInterceptor,
     getPacientes
-)
+);
 
 router.post(
     '/cadastro',
     tokenInterceptor as RequestHandler,
     autorizacaoPerfilInterceptor,
     postPacientes
-)
+);
 
 export default router;

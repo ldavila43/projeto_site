@@ -1,5 +1,5 @@
-import CadastroDTO from '@/DTO/CadastroDTO';
-import FormDTO from '@/DTO/FormDTO';
+import CadastroDTO from '@/models/CadastroDTO';
+import FormDTO from '@/models/FormDTO';
 
 export function validarCadastro(dados: FormDTO): CadastroDTO {
 

@@ -1,6 +1,6 @@
 import { Router, RequestHandler } from 'express';
 import { tokenInterceptor, autorizacaoPerfilInterceptor } from '../../interceptors/Interceptor';
-import { controladorExames } from './ExamesController'
+import { controladorExames } from './examesController'
 import { getDadosVisaoGeral } from './resultados/resultadoController';
 
 

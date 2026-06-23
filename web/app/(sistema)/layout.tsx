@@ -1,12 +1,11 @@
 import { redirect } from 'next/navigation'
 import { tokenExtractor } from '@/actions/tokenAction';
 import { definirHierarquia } from '@/utils/PerfisDashboard';
-import PayloadUsuario from '@/DTO/PayloadUsuario';
-import UserContextDTO from '@/DTO/UserContextDTO';
+import PayloadUsuario from '@/models/PayloadUsuario';
+import UserContextDTO from '@/models/UserContextDTO';
 import { AuthProvider } from '@/contexts/AuthContext';
-import Sidebar from '@/components/dashboard/Sidebar';
-import Header from '@/components/dashboard/Header';
 import { PerfilID } from '@/utils/PerfisEnum'
+import DashboardShell from '@/components/dashboard/DashboardShell';
 
 export default async function DashboardLayout( { children }: Readonly<{children: React.ReactNode}> ) {
 
@@ -26,15 +25,9 @@ export default async function DashboardLayout( { children }: Readonly<{children:
 
     return (
         <AuthProvider initialData={contextoUsuario}>
-            <div className="flex h-screen w-screen overflow-hidden bg-gray-50">
-                <Sidebar />
-                <div className="flex-1 flex flex-col h-full overflow-hidden">
-                    <Header />
-                    <main className="flex-1 overflow-y-auto p-8">
+            <DashboardShell>
                         {children}
-                    </main>
-                </div>
-            </div>
+            </DashboardShell>
         </AuthProvider>
     )
 }

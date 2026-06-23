@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation'
 import { useState } from 'react';
-import LoginDTO from '@/DTO/LoginDTO';
+import LoginDTO from '@/models/LoginDTO';
 import { validarLogin } from '@/utils/ValidacoesLogin';
 import { actionLogin } from '@/actions/authActions';
 import Input from '@/components/ui/Input';
@@ -55,26 +55,23 @@ export default function LoginForm() {
 
     return (
         <form
-        onSubmit={enviarLogin}
-        className="w-full p-8 rounded-2xl shadow-lg flex flex-col gap-4"
+            onSubmit={enviarLogin}
+            className="w-full max-w-sm flex flex-col"
         >
-            <h1 className="text-2xl font-bold text-center">Entrar</h1>
+            <div className='flex flex-col gap-4'>
 
-            <label className="flex flex-col gap-1 required">
-                <span>
-                    Usuario:
-                </span>
-                <Input required name="documentoIdentificacao" className={submited && !formData.documentoIdentificacao ? 'border-red-500': ''} value={formData.documentoIdentificacao} onChange={handleChange} />
-            </label>
-
-            <label className="flex flex-col gap-1">
-                <span>
-                    Senha:
-                </span>
-            <Input required name="senhaLogin" type='password' className={submited && !formData.senhaLogin ? 'border-red-500': ''} value={formData.senhaLogin} onChange={handleChange} />
-            </label>
-            <Button type="submit">Fazer Login</Button>
-            <Link className='text-center' href="/register">cadastre-se</Link>
+                <h1 className="text-3xl font-bold text-center">Entrar</h1>
+                    <div className='flex flex-col gap-2'>
+                        <span>
+                            Usuario:
+                        </span>
+                        <Input required name="documentoIdentificacao" className={submited && !formData.documentoIdentificacao ? 'border-red-500': ''} value={formData.documentoIdentificacao} onChange={handleChange} />
+                        <span>Senha:</span>
+                        <Input required name="senhaLogin" type='password' className={submited && !formData.senhaLogin ? 'border-red-500': ''} value={formData.senhaLogin} onChange={handleChange} />
+                        <Button className='bg-[#1E3A5F] text-white hover:bg-[#2E6DA4] w-full' type="submit">Fazer Login</Button>
+                        <Link className='text-center' href="/register">cadastre-se</Link>
+                    </div>
+            </div>
         </form>
     );
 }

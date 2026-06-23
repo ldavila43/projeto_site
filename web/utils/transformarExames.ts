@@ -1,7 +1,7 @@
 
-import { ExamesPeriodo } from '@/DTO/ViewProfissionaisDTO';
+import { ExamesPeriodo } from '@/models/ViewProfissionaisDTO';
 
-export function transformarExamesParaGrafico(dados: ExamesPeriodo[]) {
+export function transformarExamesParaGrafico(dados: ExamesPeriodo[]){
     const tiposUnicos = [...new Set(
         dados.flatMap(r => r.exames.map(e => e.tipoExame))
     )];

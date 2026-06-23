@@ -1,13 +1,13 @@
 import { Router, RequestHandler } from 'express';
 import { tokenInterceptor, autorizacaoInterceptor } from '../../interceptors/Interceptor';
 import { 
-    dadosDashPacientes, 
-    dadosDashProfissionais, 
-    dadosDashAdmin, 
-    dadosSolicitacoesAdmin, 
+    dadosDashPacientes,
+    dadosDashProfissionais,
+    dadosDashAdmin,
+    dadosSolicitacoesAdmin,
     dadosCardResumoColaborador,
     dadosTipoExameColaborador
-} from './DashboardController'
+} from './dashboardController'
 
 const router = Router();
 

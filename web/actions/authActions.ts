@@ -1,8 +1,9 @@
 'use server'
-import { cookies } from 'next/headers'
-import { enviarLogin } from '@/services/AuthService'
-import LoginDTO from '@/DTO/LoginDTO'
+import { cookies } from 'next/headers';
+import { enviarLogin } from '@/services/AuthService';
+import LoginDTO from '@/models/LoginDTO';
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
 
 export async function actionLogin(dados: LoginDTO): Promise<{ sucesso: boolean; mensagem?: string }> {
@@ -39,4 +40,20 @@ export async function actionLogout() {
     const cookieStore = await cookies();
     cookieStore.delete('session');
     redirect('/login')
+}
+
+export async function actionAlterarPerfil(novoPerfil: string) {
+    const cookieStore = await cookies();
+
+    cookieStore.set('x-perfil-ativo', novoPerfil, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 30 * 24 * 60 * 60
+    });
+
+    console.log('perfil trocado' + novoPerfil)
+
+    revalidatePath('/', 'layout'); 
 }

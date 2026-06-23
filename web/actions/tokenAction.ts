@@ -1,7 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import PayloadUsuario from '@/DTO/PayloadUsuario';
+import PayloadUsuario from '@/models/PayloadUsuario';
 import { jwtDecode } from 'jwt-decode';
 
 export async function tokenExtractor() {

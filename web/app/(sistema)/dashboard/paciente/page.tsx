@@ -1,7 +1,10 @@
 import { ViewPaciente } from '@/components/dashboard/ViewPaciente'
+import { buscarDadosPacientes } from '@/actions/dashBoardActions';
 
-export default function HomePaciente() {
+export default async function HomePaciente() {
+    const dados = await buscarDadosPacientes();
+
     return (
-        <ViewPaciente />
+        <ViewPaciente dados={dados} />
     )
 }

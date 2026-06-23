@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+/* globals.css */
+:root {
+  --brand-dark: #1E3A5F;
+  --brand-mid: #2E6DA4;
+  --brand-teal: #1A9B8C;
+  --brand-teal-light: #6DD5CA;
+}
