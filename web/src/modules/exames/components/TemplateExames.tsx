@@ -41,7 +41,6 @@ const colunas: ColunaTabela<Exames>[] = [
 ]
 
 export default function TemplateExames({ funcao, acoesExtra, exibirFiltroPaciente, exibirFiltroProfissional }: ExamesProps) {
-    // Toda a complexidade foi abstraída para esta única linha
     const {
         dados,
         carregando,

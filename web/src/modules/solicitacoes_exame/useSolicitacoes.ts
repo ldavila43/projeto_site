@@ -63,7 +63,6 @@ export function useSolicitacoes(
     }
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         const { name, value } = e.target;
-        // Tratamento especial para as datas (que vêm como string do input date)
         if (name === 'dataIni' || name === 'dataFim') {
             setFiltros(prev => ({ ...prev, [name]: value ? new Date(value) : undefined, offset: 0 }));
         } else {

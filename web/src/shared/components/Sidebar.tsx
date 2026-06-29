@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useContext } from 'react';
 import { usePathname } from 'next/navigation'
 import { AuthContext } from '@/src/shared/AuthContext';
+import { actionLogout } from '@/src/modules/auth/authActions';
 
 interface SidebarProps {
     menuAberto: boolean
@@ -52,7 +53,6 @@ export default function Sidebar({ menuAberto }: SidebarProps) {
 
     return (
         <aside
-            // className="w-64 bg-[#0A1930] text-white flex flex-col h-screen justify-between"
             className={`
                 bg-[#0A1930] h-full flex flex-col
                 transition-all duration-300 ease-in-out
@@ -86,10 +86,10 @@ export default function Sidebar({ menuAberto }: SidebarProps) {
 
             <div className="p-6 flex flex-col gap-4">
                 <div className="flex items-center gap-2 text-xs text-gray-400">
-                    <span>🇧🇷 PT-BR</span>
                 </div>
                 
-                <button className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                <button className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-blue-900/50 hover:text-red-600 transition-colors"
+                    onClick={actionLogout}>
                     Sair
                 </button>
             </div>

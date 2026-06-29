@@ -147,9 +147,6 @@ export default function TemplateNovaSolicitacao() {
                 </div>
 
                 <div className="mt-8 flex justify-end gap-3">
-                    <button type="button" className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                        Cancelar
-                    </button>
                     <button
                         type="submit"
                         disabled={salvando || !form.idPaciente || examesUI.length === 0}

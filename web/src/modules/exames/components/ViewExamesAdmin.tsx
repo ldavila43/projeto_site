@@ -6,8 +6,10 @@ export default function ViewExamesAdmin() {
 
     return (
         <div>
-            <TemplateExames 
-                funcao={buscarDadosExames}/>
+            <TemplateExames
+                funcao={buscarDadosExames}
+                exibirFiltroPaciente={true}
+                exibirFiltroProfissional={true}/>
         </div>
     );
 }

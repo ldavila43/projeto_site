@@ -37,7 +37,8 @@ export interface SolicitacoesExame {
     nomeProfissional?: string,
     dataSolicitacao: string,
     statusSolicitacao: string,
-    quantidadeExames: string
+    quantidadeExames: string,
+    tiposExame: string[]
 }
 
 export interface GetSolicitacoesResponse{

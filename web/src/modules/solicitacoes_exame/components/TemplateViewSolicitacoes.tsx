@@ -9,7 +9,7 @@ import { useSolicitacoes } from '../useSolicitacoes';
 export interface SolicitacoesProps {
     funcao: (filtros: RequestSolicitacoesDTO) => Promise<GetSolicitacoesResponse>;
     initialDados: GetSolicitacoesResponse;
-    onAbrirNovaSolicitacao: () => void; // Prop para disparar a abertura do modal
+    onAbrirNovaSolicitacao: () => void;
 }
 
 const colunas: ColunaTabela<SolicitacoesExame>[] = [
@@ -21,7 +21,9 @@ const colunas: ColunaTabela<SolicitacoesExame>[] = [
         titulo: 'Data',
         render: (sol) => new Date(sol.dataSolicitacao).toLocaleDateString('pt-BR')
     },
+    { chave: 'tiposExame', titulo: 'Exames SOlicitados'},
     { chave: 'quantidadeExames', titulo: 'Qtd. Exames' },
+    { chave: 'quantidadeKits', titulo: 'Qtd. Kits' },
     {
         chave: 'statusSolicitacao',
         titulo: 'Status',
@@ -51,7 +53,6 @@ export default function TemplateSolicitacoes({ funcao, initialDados, onAbrirNova
         <div>
             <Card titulo='Solicitações de Exames'>
                 <div className="space-y-4">
-                    {/* Botão de Cadastro Posicionado no topo ou junto aos filtros */}
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-sm font-medium text-gray-500">Filtros de Busca</h3>
                         <button
@@ -89,7 +90,7 @@ export default function TemplateSolicitacoes({ funcao, initialDados, onAbrirNova
                         colunas={colunas}
                         metadados={dados?.metadados ?? { totalRegistros: 0, totalPaginas: 1 }}
                         pagina={filtros.page!}
-                        limite={String(filtros.limit || 10)} // Convertido para string para o componente genérico
+                        limite={String(filtros.limit || 10)}
                         getKey={(sol) => sol.protocolo}
                         onMudarPagina={handlePagina}
                         onMudarLimite={handleLimite}
