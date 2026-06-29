@@ -27,7 +27,7 @@ const MENU_POR_PERFIL: Record<number, { label: string; href: string}[]> = {
         { label: 'Exames', href: '/exames' },
         { label: 'Pacientes', href: '/pacientes' },
         { label: 'Profissionais', href: '/profissionais'},
-        { label: 'Nova Análise', href: '/analise'}
+        { label: 'Solicitações', href: '/solicitacoes'}
     ],
     [PERFIS.COLABORADOR]: [
         { label: 'Dashboard', href: '/dashboard' },
@@ -35,7 +35,7 @@ const MENU_POR_PERFIL: Record<number, { label: string; href: string}[]> = {
         { label: 'Exames', href: '/exames' },
         { label: 'Pacientes', href: '/pacientes' },
         { label: 'Profissionais', href: '/profissionais'},
-        { label: 'Nova Análise', href: '/analise'}
+        { label: 'Solicitações', href: '/solicitacoes'}
     ]
 };
 

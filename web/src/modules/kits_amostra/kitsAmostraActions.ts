@@ -1,15 +1,15 @@
 'use server'
 import { cookies } from 'next/headers';
-import { servicoOperadores } from './OperadoresService';
-import { OperadoresResponse, FiltroBuscaOperadores } from './operadoresDTO';
+import { servicoKits } from './kitsAmostraService';
+import { ResponseGetKits, RequestGetKits } from './KitsAmostraDTO';
 
 export async function executarComSessao<T>(
     funcaoServico: (
         token: string,
         perfilAtivo: string,
-        filtros: FiltroBuscaOperadores
+        filtros: RequestGetKits
     ) => Promise<T>,
-    filtros: FiltroBuscaOperadores
+    filtros: RequestGetKits
 ): Promise<T> {
     const cookieStore = await cookies();
     const token = cookieStore.get('session')?.value;
@@ -21,9 +21,9 @@ export async function executarComSessao<T>(
     return funcaoServico(token, perfilAtivo, filtros);
 }
 ;
-export async function buscarDadosOperadores (
-    filtros: FiltroBuscaOperadores
-): Promise<OperadoresResponse> {
-    return executarComSessao(servicoOperadores, filtros);
+export async function buscarDadosKitsAmostra (
+    filtros: RequestGetKits
+): Promise<ResponseGetKits> {
+    return executarComSessao(servicoKits, filtros);
 };
 

@@ -53,7 +53,6 @@ export async function actionAlterarPerfil(novoPerfil: string) {
         maxAge: 30 * 24 * 60 * 60
     });
 
-    console.log('perfil trocado' + novoPerfil)
 
     revalidatePath('/', 'layout'); 
 }

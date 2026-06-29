@@ -7,14 +7,12 @@ const regrasDeAcesso: Record<string, number[]> = {
     '/dashboard/profissional': [0, 1],
     '/dashboard/colaborador': [0, 2],
     '/cadastros': [0, 2],
-    '/profissionais': [0,2]
+    '/profissionais': [0,2],
+    '/solicitacoes':[0,2]
 };
 
 export default function proxy(req: NextRequest) {
     const session = req.cookies.get('session');
-
-    console.log('Middleware funcionando')
-    console.log(req.cookies.getAll)
 
     const caminho = req.nextUrl.pathname;
 
@@ -72,6 +70,7 @@ export const config = {
         '/cadastros/:path*',
         '/exames/:path*',
         '/pacientes/:path*',
-        '/profissionais/:path'
+        '/profissionais/:path',
+        '/solicitacoes'
     ]
 };

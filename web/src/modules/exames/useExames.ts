@@ -29,9 +29,9 @@ export function useExames(funcao: (filtros: FiltrosBuscaExame) => Promise<Exames
 
         return () => clearTimeout(timer);
     }, [
-        filtrosBuscaExames.nomePaciente, 
-        filtrosBuscaExames.nomeProfissional, 
-        filtrosBuscaExames.protocolo, 
+        filtrosBuscaExames.nomePaciente,
+        filtrosBuscaExames.nomeProfissional,
+        filtrosBuscaExames.protocolo,
         filtrosBuscaExames.tipoExame,
         carregarDados
     ]);

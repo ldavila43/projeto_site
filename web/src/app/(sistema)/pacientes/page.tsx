@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 const rotasPorPerfil = {
     0: '/pacientes/admin',
     1: '/pacientes/profissional',
-    2: '/pacientes/colaborador',
+    2: '/pacientes/admin',
 } as const;
 
 
