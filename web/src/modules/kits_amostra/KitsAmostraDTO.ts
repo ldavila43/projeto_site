@@ -21,8 +21,8 @@ export interface RequestGetKits {
     dataAtivacaoFim?: Date,
     dataValidadeIni?: Date,
     dataValidadeFim?: Date,
-    limit?: number,
-    offset?: number
+    limit?: string,
+    page?: string
 }
 
 export interface Metadados {

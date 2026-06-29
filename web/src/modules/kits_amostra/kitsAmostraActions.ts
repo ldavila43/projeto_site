@@ -1,6 +1,6 @@
 'use server'
 import { cookies } from 'next/headers';
-import { servicoKits } from './kitsAmostraService';
+import { servicoGetKits } from './kitsAmostraService';
 import { ResponseGetKits, RequestGetKits } from './KitsAmostraDTO';
 
 export async function executarComSessao<T>(
@@ -24,6 +24,6 @@ export async function executarComSessao<T>(
 export async function buscarDadosKitsAmostra (
     filtros: RequestGetKits
 ): Promise<ResponseGetKits> {
-    return executarComSessao(servicoKits, filtros);
+    return executarComSessao(servicoGetKits, filtros);
 };
 

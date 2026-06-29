@@ -8,7 +8,8 @@ const regrasDeAcesso: Record<string, number[]> = {
     '/dashboard/colaborador': [0, 2],
     '/cadastros': [0, 2],
     '/profissionais': [0,2],
-    '/solicitacoes':[0,2]
+    '/solicitacoes':[0,2],
+    '/kits-amostra':[0,2]
 };
 
 export default function proxy(req: NextRequest) {

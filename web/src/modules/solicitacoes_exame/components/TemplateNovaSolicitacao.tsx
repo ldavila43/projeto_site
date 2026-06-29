@@ -113,7 +113,7 @@ export default function TemplateNovaSolicitacao() {
                             value=""
                             onChange={(id, label) => handleSelecionarKit(Number(id), label)}
                             fetcher={async (search) => {
-                                const res =  await buscarDadosKitsAmostra({codBgk: search, limit: 5});
+                                const res =  await buscarDadosKitsAmostra({codBgk: search, limit: '5'});
                                 console.log(res);
                                 return res.kitsAmostra.map(kit => ({ id: kit.idKit, label: kit.codBgk || 'Sem nome' }));
                             }}
@@ -133,7 +133,7 @@ export default function TemplateNovaSolicitacao() {
                             value=""
                             onChange={(id, label) => handleSelecionarExame(Number(id), label)}
                             fetcher={async (search) => {
-                                const res = buscarDadosTiposExame({descricao: search, limit: 5})
+                                const res = buscarDadosTiposExame({descricao: search, limit: '5'})
                                 return (await res).tiposExame.map(tipoExame => ({ id: tipoExame.idTipoExame, label: tipoExame.descricao || 'Sem nome' }));
                             }}
                         />

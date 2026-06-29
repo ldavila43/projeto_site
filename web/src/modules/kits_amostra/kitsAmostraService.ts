@@ -1,7 +1,7 @@
 import { fetchAutenticado } from '@/src/shared/Service'
 import { ResponseGetKits, RequestGetKits } from './KitsAmostraDTO';
 
-export async function servicoKits(
+export async function servicoGetKits(
     token: string,
     perfilAtivo: string,
     filtros: RequestGetKits

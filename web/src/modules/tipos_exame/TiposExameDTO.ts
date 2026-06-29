@@ -22,6 +22,6 @@ export interface RequestGetTiposExame {
     descricao?: string,
     status?: string,
     categoriaExame?: string,
-    limit?: number,
-    offset?: number
+    limit?: string,
+    page?: string
 }
