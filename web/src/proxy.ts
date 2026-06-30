@@ -14,7 +14,6 @@ const regrasDeAcesso: Record<string, number[]> = {
 
 export default function proxy(req: NextRequest) {
     const session = req.cookies.get('session');
-
     const caminho = req.nextUrl.pathname;
 
     if (publicRoutes.includes(caminho)) {
@@ -41,12 +40,13 @@ export default function proxy(req: NextRequest) {
             new URL('/dashboard', req.url)
         );
     }
+    
     return NextResponse.next();
 }
 
 function possuiPermissao(
     caminho: string,
-    perfisUsuario: number[]
+    perfisUsuario: { id: number, nome: string }[] 
 ): boolean {
     const regra = Object.entries(regrasDeAcesso).find(
         ([rota]) => caminho.startsWith(rota)
@@ -58,9 +58,11 @@ function possuiPermissao(
 
     const [, perfisPermitidos] = regra;
 
-    return perfisUsuario.some(
-        perfil => perfisPermitidos.includes(perfil)
-    );
+    return perfisUsuario.some((perfil) => {
+        const idPerfil = typeof perfil === 'object' ? perfil.id : perfil;
+        
+        return perfisPermitidos.includes(idPerfil);
+    });
 }
 
 export const config = {

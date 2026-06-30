@@ -1,8 +1,8 @@
-import { PerfilID } from '@/src/shared/utils/PerfisEnum'
+import {Perfil} from '../../shared/PayloadUsuario'
 
 export default interface UserContextDTO {
     id: string,
     nome: string,
-    perfisDisponiveis: PerfilID[]
-    perfilAtivo: PerfilID | null
+    perfisDisponiveis: Perfil[]
+    perfilAtivo?: number
 }

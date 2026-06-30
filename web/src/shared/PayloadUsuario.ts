@@ -1,5 +1,10 @@
-export default interface PayloadUsuario{
-    id: string,
+export interface Perfil {
+    id: number,
+    nome: string
+}
+
+export interface PayloadUsuario {
+    id: string;
     nome: string,
-    perfis: number[]
+    perfis: Perfil[]
 }

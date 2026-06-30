@@ -6,6 +6,7 @@ export async function servicoPacientes(
     perfilAtivo: string,
     filtros: FiltrosBuscaPaciente
 ): Promise<PacienteResponse>{
+    console.log(token, perfilAtivo)
     return fetchAutenticado(
         '/pacientes/dados',
         token,

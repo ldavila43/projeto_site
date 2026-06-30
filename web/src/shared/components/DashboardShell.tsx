@@ -3,8 +3,13 @@
 import { useState } from 'react';
 import Sidebar from '@/src/shared/components/Sidebar';
 import Header from '@/src/shared/components/Header';
+import { ResponseRotasPerfil } from '@/src/modules/operadores/operadoresDTO';
 
-export default function DashboardShell({ children }: { children: React.ReactNode }) {
+interface DashboardShellProps {
+    children: React.ReactNode;
+    linksDaSidebar: ResponseRotasPerfil;
+}
+export default function DashboardShell({ children, linksDaSidebar }: DashboardShellProps) {
     const [menuAberto, setMenuAberto] = useState(true);
 
     function toggleMenu() {
@@ -13,7 +18,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
     return (
         <div className="flex h-screen w-screen overflow-hidden bg-gray-50">
-            <Sidebar menuAberto={menuAberto} />
+            <Sidebar menuAberto={menuAberto} linksDaSidebar={linksDaSidebar} />
             
             <div className="flex-1 flex flex-col h-full overflow-hidden">
                 <Header toggleMenu={toggleMenu} />

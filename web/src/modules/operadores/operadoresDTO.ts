@@ -25,3 +25,21 @@ export interface OperadoresResponse {
     dados: Operador[]
     metadados: Metadados
 }
+
+export interface Rota {
+    label: string,
+    href: string
+}
+
+export interface ResponseRotasPerfil {
+    rotas: Rota[]
+}
+
+export interface Perfil {
+    id: number,
+    nome: string
+}
+
+export interface ResponseGetPerfis {
+    perfis: Perfil[]
+}

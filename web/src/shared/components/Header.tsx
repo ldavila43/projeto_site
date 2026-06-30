@@ -1,10 +1,9 @@
 'use client'
 
-import { PERFIS_INFO } from '@/src/shared/utils/PerfisEnum';
-import { definirPerfis } from '@/src/shared/utils/PerfisDashboard';
 import { useContext } from 'react';
 import { useRouter } from 'next/navigation';
-import { actionLogout } from '@/src/modules/auth/authActions';
+// 1. Importamos a action que salva o cookie
+import { actionLogout, actionAlterarPerfil } from '@/src/modules/auth/authActions'; 
 import { AuthContext } from '@/src/shared/AuthContext';
 
 const rotasPorPerfil = {
@@ -14,30 +13,36 @@ const rotasPorPerfil = {
     3: '/dashboard/paciente'
 } as const;
 
-export default function Header( {toggleMenu}: {toggleMenu:() => void} ) {
+export default function Header({ toggleMenu }: { toggleMenu: () => void }) {
     const contexto = useContext(AuthContext);
     const router = useRouter();
+    
     if (!contexto) return null;
+    
     const { nome, perfilAtivo, perfisDisponiveis } = contexto;
 
-    const perfisParaExibir =
-    definirPerfis(perfisDisponiveis);
+    const perfilAtualObj = perfisDisponiveis.find((perfil) => perfil.id === perfilAtivo);
+    const nomePerfil = perfilAtualObj ? perfilAtualObj.nome : '';
 
-    function handleTrocaPerfil(novoPerfil: string) {
-        if(!contexto) {
+    async function handleTrocaPerfil(novoPerfil: string) {
+        if (!contexto) {
             router.replace('/login');
             return null;
-        };
+        }
+        
         contexto.alterarPerfil(novoPerfil);
-        const idRota = Number(novoPerfil)
+        
+        await actionAlterarPerfil(novoPerfil);
+        
+        const idRota = Number(novoPerfil);
+        console.log(idRota);
         const novaRota = rotasPorPerfil[idRota as keyof typeof rotasPorPerfil];
-        router.push(novaRota)
+        console.log(novaRota)
+        
+        if (novaRota) {
+            router.push(novaRota);
+        }
     }
-
-    const nomePerfil =
-        perfilAtivo !== null
-        ? PERFIS_INFO[perfilAtivo].nome
-        : '';
 
     return (
         <header className="bg-white h-20 border-b border-gray-200 px-8 flex items-center justify-between w-full shadow-sm z-10">
@@ -54,11 +59,12 @@ export default function Header( {toggleMenu}: {toggleMenu:() => void} ) {
                 <select
                     key={perfilAtivo}
                     value={String(perfilAtivo ?? '')}
-                    onChange={e => {
-                        handleTrocaPerfil(e.target.value)
-                    }}>
-                    {perfisParaExibir.map((perfil) => (
-                        <option key={perfil} value={String(perfil)}>{PERFIS_INFO[perfil].nome}</option>
+                    onChange={e => handleTrocaPerfil(e.target.value)}
+                >
+                    {perfisDisponiveis.map((perfil) => (
+                        <option key={perfil.id} value={String(perfil.id)}>
+                            {perfil.nome}
+                        </option>
                     ))}
                 </select>
             </div>
@@ -70,8 +76,8 @@ export default function Header( {toggleMenu}: {toggleMenu:() => void} ) {
                     
                     <div className="flex flex-col text-right">
                         <span className="text-sm font-bold text-[#0A1930]">{nome}</span>
-                        <span className="text-xs text-gray-500 font-medium">
-                            {nomePerfil}
+                        <span className="text-xs text-gray-500 font-medium capitalize">
+                            {nomePerfil.replace('_', ' ')}
                         </span>
                     </div>
                 </div>
@@ -84,7 +90,6 @@ export default function Header( {toggleMenu}: {toggleMenu:() => void} ) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
                 </button>
-                
             </div>
         </header>
     )

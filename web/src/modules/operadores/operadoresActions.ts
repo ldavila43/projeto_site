@@ -1,7 +1,7 @@
 'use server'
 import { cookies } from 'next/headers';
-import { servicoOperadores } from './OperadoresService';
-import { OperadoresResponse, FiltroBuscaOperadores } from './operadoresDTO';
+import { servicoOperadores, servicoRotas, servicoPerfis } from './OperadoresService';
+import { OperadoresResponse, FiltroBuscaOperadores, ResponseRotasPerfil } from './operadoresDTO';
 
 export async function executarComSessao<T>(
     funcaoServico: (
@@ -27,3 +27,23 @@ export async function buscarDadosOperadores (
     return executarComSessao(servicoOperadores, filtros);
 };
 
+export async function buscaRotasOperadores (): Promise<ResponseRotasPerfil> {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('session')?.value;
+    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
+    if (!token) {
+        throw new Error("Sem token válido")
+    }
+
+    return servicoRotas(token, perfilAtivo);
+}
+
+export async function buscaPerfisOperador() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('session')?.value;
+    if(!token) {
+        throw new Error("Sem token válido");
+    }
+
+    return servicoPerfis(token);
+}

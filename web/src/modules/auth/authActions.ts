@@ -42,7 +42,7 @@ export async function actionLogout() {
     redirect('/login')
 }
 
-export async function actionAlterarPerfil(novoPerfil: string) {
+export async function actionAlterarPerfil(novoPerfil: string, rotaDestino?: string) {
     const cookieStore = await cookies();
 
     cookieStore.set('x-perfil-ativo', novoPerfil, {
@@ -53,6 +53,9 @@ export async function actionAlterarPerfil(novoPerfil: string) {
         maxAge: 30 * 24 * 60 * 60
     });
 
-
-    revalidatePath('/', 'layout'); 
+    if (rotaDestino) {
+        redirect(rotaDestino);
+    } else {
+        revalidatePath('/', 'layout');
+    }
 }
