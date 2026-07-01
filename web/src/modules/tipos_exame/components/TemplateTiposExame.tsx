@@ -48,8 +48,6 @@ export default function TemplateTiposExame({ funcao, initialDados, acoesExtra, o
         <div>
             <Card titulo='Tipos de Exame'>
                 <div className="space-y-4">
-                    
-                    {/* Cabeçalho com botão de ação (opcional) */}
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-sm font-medium text-gray-500">Filtros de Busca</h3>
                         {onAbrirNovoTipo && (

@@ -7,7 +7,6 @@ import { GetSolicitacoesResponse } from '../SolicitacaoDTO';
 
 export default function ViewSolicitacoes({ dadosIni }: { dadosIni: GetSolicitacoesResponse }) {
     const [modalAberto, setModalAberto] = useState(false);
-    console.log(dadosIni)
     return (
         <div>
             <TemplateSolicitacoes

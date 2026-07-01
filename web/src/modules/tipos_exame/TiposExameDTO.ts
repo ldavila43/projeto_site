@@ -25,3 +25,12 @@ export interface RequestGetTiposExame {
     limit?: string,
     page?: string
 }
+
+export interface RequestPostTipoExame {
+    nome: string,
+    caminhoImagem?: string,
+    caminhoIcone?: string,
+    caminhoLogo?: string,
+    status?: string,
+    idCategoriaExame?: number
+}

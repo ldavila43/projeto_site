@@ -11,12 +11,13 @@ export interface KitsProps {
     funcao: (filtros: RequestGetKits) => Promise<ResponseGetKits>;
     initialDados: ResponseGetKits;
     acoesExtra?: (kit: KitAmostra) => ReactNode;
-    onAbrirNovoKit?: () => void; // Caso queira usar um modal de cadastro no futuro
+    onAbrirNovoKit?: () => void;
 }
 
 const colunas: ColunaTabela<KitAmostra>[] = [
     { chave: 'codBgk', titulo: 'Cód. BGK', className: 'font-medium text-gray-800' },
     { chave: 'codLote', titulo: 'Lote' },
+    { chave: 'codApoio', titulo: 'Cód. Apoio'},
     { chave: 'tipoKit', titulo: 'Tipo do Kit' },
     { chave: 'responsavel', titulo: 'Responsável', render: (kit) => kit.responsavel || '-' },
     {

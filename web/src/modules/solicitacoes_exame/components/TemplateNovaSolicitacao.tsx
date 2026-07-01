@@ -85,7 +85,6 @@ export default function TemplateNovaSolicitacao() {
                         onChange={(id) => handleFieldChange('idPaciente', String(id))}
                         fetcher={async (search) => {
                             const res = await buscarDadosPacientes({ nome: search, limit: '5' });
-                            console.log(res.pacientes.map(p => ({ id: p.idPaciente, label: p.nome, idPessoa: p.idPessoa})));
                             return res.pacientes.map(p => ({ id: p.idPaciente, label: p.nome || 'Sem nome' }));
 
                         }}
@@ -114,7 +113,6 @@ export default function TemplateNovaSolicitacao() {
                             onChange={(id, label) => handleSelecionarKit(Number(id), label)}
                             fetcher={async (search) => {
                                 const res =  await buscarDadosKitsAmostra({codBgk: search, limit: '5'});
-                                console.log(res);
                                 return res.kitsAmostra.map(kit => ({ id: kit.idKit, label: kit.codBgk || 'Sem nome' }));
                             }}
                         />

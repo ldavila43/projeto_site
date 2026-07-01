@@ -35,9 +35,7 @@ export default function Header({ toggleMenu }: { toggleMenu: () => void }) {
         await actionAlterarPerfil(novoPerfil);
         
         const idRota = Number(novoPerfil);
-        console.log(idRota);
         const novaRota = rotasPorPerfil[idRota as keyof typeof rotasPorPerfil];
-        console.log(novaRota)
         
         if (novaRota) {
             router.push(novaRota);

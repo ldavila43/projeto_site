@@ -15,7 +15,7 @@ export async function actionLogin(dados: LoginDTO): Promise<{ sucesso: boolean; 
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
             path: '/',
-            maxAge: 60 * 60
+            maxAge: 60 * 60 *24
         });
         return {
             sucesso: true,
