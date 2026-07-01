@@ -15,9 +15,10 @@ export type FiltrosBuscaExame = {
     tipoExame?: string;
     nomePaciente?: string,
     nomeProfissional?: string,
-    protocolo?: string;
-    limit?: string;
-    page?: string;
+    protocolo?: string,
+    status?: string,
+    limit?: string,
+    page?: string
 }
 
 export interface ExamesMetadados {

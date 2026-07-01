@@ -64,7 +64,7 @@ export default function TemplateExames({ funcao, acoesExtra, exibirFiltroPacient
         <div>
             <Card titulo='Exames'>
                 <div className="space-y-4">
-                    <div id="filtros" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div id="filtros" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         <CampoFiltro
                             label="Protocolo"
                             id="protocolo"
@@ -97,6 +97,26 @@ export default function TemplateExames({ funcao, acoesExtra, exibirFiltroPacient
                                 onChange={handleChange}
                             />
                         )}
+                        <div className="flex flex-col">
+                            <label
+                                htmlFor={'status'}
+                                className="text-sm font-medium text-gray-700"
+                            >Status</label>
+
+                            <select
+                                id="status"
+                                name="status"
+                                value={filtrosBuscaExames.status}
+                                onChange={handleChange}
+                                className="border rounded-md p-2 text-sm"
+                            >
+                                <option value="">Todos</option>
+                                <option value="AGUARDANDO">Aguardando</option>
+                                <option value="EM ANÁLISE">Em análise</option>
+                                <option value="CONCLUÍDO">Concluido</option>
+                                <option value="CANCELADO">Cancelado</option>
+                            </select>
+                        </div>
                     </div>
                     <div className='flex justify-end'>
                         <button

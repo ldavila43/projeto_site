@@ -68,7 +68,27 @@ export default function TemplateSolicitacoes({ funcao, initialDados, onAbrirNova
                     <div id="filtros" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <CampoFiltro label="Protocolo" id="protocolo" name="protocolo" value={filtros.protocolo || ''} onChange={handleChange} />
                         <CampoFiltro label="Paciente" id="nomePaciente" name="nomePaciente" value={filtros.nomePaciente || ''} onChange={handleChange} />
-                        <CampoFiltro label="Status" id="status" name="status" value={filtros.status || ''} onChange={handleChange} />
+                        <div className="flex flex-col">
+                            <label
+                                htmlFor={'status'}
+                                className="text-sm font-medium text-gray-700"
+                            >Status</label>
+
+                            <select
+                                id="status"
+                                name="status"
+                                value={filtros.status}
+                                onChange={handleChange}
+                                className="border rounded-md p-2 text-sm"
+                            >
+                                <option value="">Todos</option>
+                                <option value="AMOSTRAS EM ANÁLISE">Em análise</option>
+                                <option value="KIT ENVIADO">Kit enviado</option>
+                                <option value="AGUARDANDO PAGAMENTO">Aguardando pagamento</option>
+                                <option value="PAGA">Paga</option>
+                                <option value="PRONTA">Pronta</option>
+                            </select>
+                        </div>
                         <CampoFiltro label="Data Início" id="dataIni" name="dataIni" value={filtros.dataIni ? new Date(filtros.dataIni).toISOString().split('T')[0] : ''} onChange={handleChange} />
                     </div>
                     

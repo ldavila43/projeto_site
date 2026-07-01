@@ -82,13 +82,24 @@ export default function TemplateOperadores({ funcao, acoesExtra }: OperadoresPro
                             value={filtros.documentoOperador}
                             onChange={handleChange}
                         />
-                        <CampoFiltro
-                            label="Status"
-                            id="status"
-                            name="status"
-                            value={filtros.status}
-                            onChange={handleChange}
-                        />
+                        <div className="flex flex-col">
+                            <label
+                                htmlFor={'status'}
+                                className="text-sm font-medium text-gray-700"
+                            >Status</label>
+
+                            <select
+                                id="status"
+                                name="status"
+                                value={filtros.status}
+                                onChange={handleChange}
+                                className="border rounded-md p-2 text-sm"
+                            >
+                                <option value="">Todos</option>
+                                <option value="ATIVO">Ativo</option>
+                                <option value="INATIVO">Inativo</option>
+                            </select>
+                        </div>
                         <CampoFiltro
                             label="ID do Perfil"
                             id="idPerfil"
