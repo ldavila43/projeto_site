@@ -4,12 +4,13 @@ import TemplatePacientes from './ViewPacientes';
 import ModalDetalhesPessoa from '@/src/modules/pessoas/components/ModalDetalhesPessoa';
 import { Eye } from 'lucide-react';
 import { buscarDadosPacientes } from '@/src/modules/pacientes/pacientesActions';
-import { buscarDadosPessoa } from '@/src/modules/pessoas/pessoasActions';
+import { buscarDadosPessoa, atualizarPessoa } from '@/src/modules/pessoas/pessoasActions';
 import { PacienteDTO, PacienteResponse } from '@/src/modules/pacientes/PacientesDTO';
 
 export default function ViewPacientesAdmin({ dadosIni }: { dadosIni: PacienteResponse }) {
     const [modalAberto, setModalAberto] = useState(false);
     const [pessoaSelecionada, setPessoaSelecionada] = useState<string | null>(null);
+    const [refreshKey, setRefreshKey] = useState(0);
     function handleAbrirDetalhes(paciente: PacienteDTO) {
         setPessoaSelecionada(paciente.idPessoa);
         setModalAberto(true);
@@ -25,7 +26,6 @@ export default function ViewPacientesAdmin({ dadosIni }: { dadosIni: PacienteRes
             <TemplatePacientes
                 initialDados={dadosIni}
                 funcao={buscarDadosPacientes}
-                // 3. Injetamos o botão na tabela através do acoesExtra
                 acoesExtra={(paciente) => (
                     <button
                         onClick={() => handleAbrirDetalhes(paciente)}
@@ -35,6 +35,7 @@ export default function ViewPacientesAdmin({ dadosIni }: { dadosIni: PacienteRes
                         <Eye className="w-5 h-5" />
                     </button>
                 )}
+                refreshKey={refreshKey}
             />
 
             {pessoaSelecionada && (
@@ -42,8 +43,10 @@ export default function ViewPacientesAdmin({ dadosIni }: { dadosIni: PacienteRes
                     isOpen={modalAberto}
                     onClose={handleFecharModal}
                     titulo="Detalhes do Paciente"
-                    funcao={buscarDadosPessoa}
+                    funcaoBusca={buscarDadosPessoa}
+                    funcaoEdicao={atualizarPessoa}
                     filtros={{ idPessoa: pessoaSelecionada }}
+                    onSucesso={() => setRefreshKey(prev => prev + 1)}
                 />
             )}
         </div>

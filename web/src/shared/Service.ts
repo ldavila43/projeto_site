@@ -1,9 +1,9 @@
 export async function fetchAutenticado<T>(
+    metodo: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
     rota: string,
     token: string,
     perfilAtivo?: string | null,
-    payload?: object,
-    metodo: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' = 'GET'
+    payload?: object
 ): Promise<T> {
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
     let url = new URL(rota, baseUrl);

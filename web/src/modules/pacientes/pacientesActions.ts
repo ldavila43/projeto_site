@@ -1,6 +1,6 @@
 'use server'
 import { cookies } from 'next/headers';
-import { servicoPacientes } from '@/src/modules/pacientes/PacientesService';
+import { servicoGetPacientes } from '@/src/modules/pacientes/PacientesService';
 import { PacienteDTO, FiltrosBuscaPaciente, PacienteResponse } from '@/src/modules/pacientes/PacientesDTO';
 
 export async function executarComSessao<T>(
@@ -24,5 +24,5 @@ export async function executarComSessao<T>(
 export async function buscarDadosPacientes(
     filtros: FiltrosBuscaPaciente
 ): Promise<PacienteResponse> {
-    return executarComSessao(servicoPacientes, filtros);
+    return executarComSessao(servicoGetPacientes, filtros);
 }

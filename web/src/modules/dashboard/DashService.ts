@@ -4,7 +4,7 @@ import { DashAdminDTO } from '@/src/modules/dashboard/ViewAdminDTO'
 import { fetchAutenticado } from '@/src/shared/Service'
 
 export async function servicoDashboard(token: string): Promise<DashPacientesDTO> {
-    return fetchAutenticado<DashPacientesDTO>('/dashboard/pacientes/meus-dados', token);
+    return fetchAutenticado<DashPacientesDTO>("GET", '/dashboard/pacientes/meus-dados', token);
 }
 
 export async function servicoDashboardProfissional(
@@ -14,6 +14,7 @@ export async function servicoDashboardProfissional(
     dataFim?: string
 ): Promise<DashProfissionaisDTO> {
     return fetchAutenticado<DashProfissionaisDTO>(
+        "GET",
         '/dashboard/profissionais/meus-dados',
         token,
         undefined,
@@ -26,6 +27,7 @@ export async function servicoDashboardAdmin(
     ano?: string
 ): Promise<DashAdminDTO> {
     return fetchAutenticado<DashAdminDTO>(
+        "GET",
         '/dashboard/admin',
         token,
         undefined,
@@ -38,6 +40,7 @@ export async function servicoSolicitacoesDashboardAdmin(
     ano?: string
 ): Promise<DashAdminDTO> {
     return fetchAutenticado<DashAdminDTO>(
+        "GET",
         '/dashboard/admin/solicitacoes',
         token,
         undefined,

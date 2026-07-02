@@ -1,6 +1,6 @@
 'use server'
 import { cookies } from 'next/headers';
-import { servicoProfissionais } from './profissionaisService';
+import { servicoGetProfissionais } from './profissionaisService';
 import { FiltrosBuscaProfissional, ProfissionaisResponse } from './profissionaisDTO';
 
 export async function executarComSessao<T>(
@@ -24,5 +24,5 @@ export async function executarComSessao<T>(
 export async function buscarDadosProfissionais(
     filtros: FiltrosBuscaProfissional
 ): Promise<ProfissionaisResponse> {
-    return executarComSessao(servicoProfissionais, filtros);
+    return executarComSessao(servicoGetProfissionais, filtros);
 }

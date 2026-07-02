@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ProfissionaisResponse, FiltrosBuscaProfissional } from './profissionaisDTO';
 
-export function useProfissionais(funcao: (filtros: FiltrosBuscaProfissional) => Promise<ProfissionaisResponse>) {
+export function useProfissionais(funcao: (filtros: FiltrosBuscaProfissional) => Promise<ProfissionaisResponse>, refreshKey: number = 0) {
     const [dados, setDados] = useState<ProfissionaisResponse | null>(null);
     const [carregando, setCarregando] = useState(true);
     const [filtros, setFiltros] = useState<FiltrosBuscaProfissional>({
@@ -32,7 +32,7 @@ export function useProfissionais(funcao: (filtros: FiltrosBuscaProfissional) => 
         }, 500);
 
         return () => clearTimeout(timer);
-    }, [filtros.nome, carregarDados]);
+    }, [filtros.nome, carregarDados, refreshKey]);
 
     function handleLimite(novoLimite: string) {
         const novosFiltros: FiltrosBuscaProfissional = {

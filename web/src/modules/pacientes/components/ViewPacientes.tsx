@@ -10,7 +10,8 @@ import { usePacientes } from '../usePaciente';
 export interface PacienteProps {
     funcao: (filtros: FiltrosBuscaPaciente) => Promise<PacienteResponse>;
     initialDados: PacienteResponse;
-    acoesExtra?: (paciente: PacienteDTO) => ReactNode;
+    acoesExtra?: (paciente: PacienteDTO) => ReactNode,
+    refreshKey: number
 }
 
 const colunas: ColunaTabela<PacienteDTO>[] = [
@@ -28,7 +29,7 @@ const colunas: ColunaTabela<PacienteDTO>[] = [
     },
 ]
 
-export default function TemplatePacientes({ funcao, initialDados, acoesExtra }: PacienteProps) {
+export default function TemplatePacientes({ funcao, initialDados, acoesExtra, refreshKey = 0 }: PacienteProps) {
     const {
         dados,
         carregando,
@@ -37,7 +38,7 @@ export default function TemplatePacientes({ funcao, initialDados, acoesExtra }: 
         handleLimite,
         handlePagina,
         handlePesquisar
-    } = usePacientes(funcao, initialDados);
+    } = usePacientes(funcao, initialDados, refreshKey);
 
     return (
         <div>

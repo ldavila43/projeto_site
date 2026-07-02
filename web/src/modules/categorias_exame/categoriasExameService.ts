@@ -8,6 +8,7 @@ export async function servicoGetCategorias(
     perfilAtivo: string,
 ): Promise<ResponseGetCategorias> {
     return fetchAutenticado(
+        "GET",
         '/categorias-exame/dados',
         token,
         perfilAtivo,

@@ -10,6 +10,7 @@ import { useProfissionais } from '../useProfissionais';
 export interface ProfissionaisProps {
     funcao: (filtros: FiltrosBuscaProfissional) => Promise<ProfissionaisResponse>,
     acoesExtra?: (profissional: ProfissionalDTO) => ReactNode,
+    refreshKey: number
 }
 
 const colunas: ColunaTabela<ProfissionalDTO>[] = [
@@ -27,7 +28,7 @@ const colunas: ColunaTabela<ProfissionalDTO>[] = [
     },
 ];
 
-export default function TemplateProfissionais({ funcao, acoesExtra }: ProfissionaisProps) {
+export default function TemplateProfissionais({ funcao, acoesExtra, refreshKey= 0 }: ProfissionaisProps) {
     const {
         dados,
         carregando,
@@ -36,7 +37,7 @@ export default function TemplateProfissionais({ funcao, acoesExtra }: Profission
         handleLimite,
         handlePagina,
         handlePesquisar
-    } = useProfissionais(funcao);
+    } = useProfissionais(funcao, refreshKey);
 
     if (carregando && !dados) {
         return (

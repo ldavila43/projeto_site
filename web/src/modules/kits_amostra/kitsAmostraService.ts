@@ -7,6 +7,7 @@ export async function servicoGetKits(
     filtros: RequestGetKits
 ): Promise<ResponseGetKits>{
     return fetchAutenticado(
+        "GET",
         '/kits/dados',
         token,
         perfilAtivo,

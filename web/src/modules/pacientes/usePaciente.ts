@@ -3,7 +3,8 @@ import { FiltrosBuscaPaciente, PacienteResponse } from '@/src/modules/pacientes/
 
 export function usePacientes(
     funcao: (filtros: FiltrosBuscaPaciente) => Promise<PacienteResponse>,
-    initialDados: PacienteResponse
+    initialDados: PacienteResponse,
+    refreshKey: number = 0
 ) {
     const [dados, setDados] = useState<PacienteResponse>(initialDados);
     const [carregando, setCarregando] = useState(false);
@@ -34,7 +35,7 @@ export function usePacientes(
         }
 
         buscar();
-    }, [filtros, funcao]);
+    }, [filtros, funcao, refreshKey]);
 
     function handleLimite(novoLimite: string) {
         setFiltros(prev => ({ ...prev, limit: novoLimite, page: '1' }));

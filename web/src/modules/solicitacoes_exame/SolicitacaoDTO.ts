@@ -32,6 +32,7 @@ export interface Metadados {
 }
 
 export interface SolicitacoesExame {
+    idSolicitacao: string,
     protocolo: string,
     nomePaciente: string,
     nomeProfissional?: string,

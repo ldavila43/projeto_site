@@ -8,6 +8,7 @@ export async function servicoExames(
     perfilAtivo: string,
 ): Promise<ExamesDTO>{
     return fetchAutenticado(
+        "GET",
         '/exames/dados',
         token,
         perfilAtivo,

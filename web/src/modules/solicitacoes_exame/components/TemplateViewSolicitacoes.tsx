@@ -111,7 +111,7 @@ export default function TemplateSolicitacoes({ funcao, initialDados, onAbrirNova
                         metadados={dados?.metadados ?? { totalRegistros: 0, totalPaginas: 1 }}
                         pagina={filtros.page!}
                         limite={String(filtros.limit || 10)}
-                        getKey={(sol) => sol.protocolo}
+                        getKey={(sol) => sol.idSolicitacao}
                         onMudarPagina={handlePagina}
                         onMudarLimite={handleLimite}
                         carregando={carregando}

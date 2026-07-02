@@ -1,6 +1,6 @@
 'use server'
 import { cookies } from 'next/headers';
-import { servicoOperadores, servicoRotas, servicoPerfis } from './OperadoresService';
+import { servicoGetOperadores, servicoGetRotas, servicoGetPerfis } from './OperadoresService';
 import { OperadoresResponse, FiltroBuscaOperadores, ResponseRotasPerfil } from './operadoresDTO';
 
 export async function executarComSessao<T>(
@@ -24,7 +24,7 @@ export async function executarComSessao<T>(
 export async function buscarDadosOperadores (
     filtros: FiltroBuscaOperadores
 ): Promise<OperadoresResponse> {
-    return executarComSessao(servicoOperadores, filtros);
+    return executarComSessao(servicoGetOperadores, filtros);
 };
 
 export async function buscaRotasOperadores (): Promise<ResponseRotasPerfil> {
@@ -35,7 +35,7 @@ export async function buscaRotasOperadores (): Promise<ResponseRotasPerfil> {
         throw new Error("Sem token válido")
     }
 
-    return servicoRotas(token, perfilAtivo);
+    return servicoGetRotas(token, perfilAtivo);
 }
 
 export async function buscaPerfisOperador() {
@@ -45,5 +45,5 @@ export async function buscaPerfisOperador() {
         throw new Error("Sem token válido");
     }
 
-    return servicoPerfis(token);
+    return servicoGetPerfis(token);
 }
