@@ -1,5 +1,4 @@
 'use client'
-import { PerfilID } from '@/src/shared/utils/PerfisEnum';
 import UserContextDTO from '@/src/modules/auth/UserContextDTO';
 import { useEffect, useState, createContext } from 'react';
 import AuthContextDTO from '@/src/modules/auth/AuthContextDTO';
@@ -26,7 +25,7 @@ export function AuthProvider({ children, initialData }: Props) {
             throw new Error('Perfil inválido');
         }
 
-        setPerfilAtivo(perfil as PerfilID);
+        setPerfilAtivo(perfil);
 
         'trocando perfil'
         await actionAlterarPerfil(novoPerfil)
