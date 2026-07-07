@@ -4,12 +4,15 @@ import Card from '@/src/shared/components/Card';
 import AsyncAutocomplete from '@/src/shared/components/AsyncAutocomplete';
 import { useCadastroSolicitacao } from '../useCadastroSolicitacao';
 import { X, Save } from 'lucide-react';
-
 import { criarSolicitacaoExame } from '@/src/modules/solicitacoes_exame/solicitacoesActions'
 import { buscarDadosPacientes } from '@/src/modules/pacientes/pacientesActions';
 import { buscarDadosProfissionais } from '@/src/modules/profissionais/profissionaisActions';
 import { buscarDadosKitsAmostra } from '@/src/modules/kits_amostra/kitsAmostraActions';
 import { buscarDadosTiposExame } from '@/src/modules/tipos_exame/tiposExameActions'
+
+interface PropsTemplateTipoExame {
+    onSucesso: () => void
+}
 
 function TagItem({ label, onRemove }: { label: string, onRemove: () => void }) {
     return (
@@ -22,7 +25,7 @@ function TagItem({ label, onRemove }: { label: string, onRemove: () => void }) {
     );
 }
 
-export default function TemplateNovaSolicitacao() {
+export default function TemplateNovaSolicitacao({onSucesso}: PropsTemplateTipoExame) {
     const {
         form,
         salvando,
@@ -60,10 +63,9 @@ export default function TemplateNovaSolicitacao() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={(e) => handleSubmit(e, onSucesso)} className="space-y-6">
             <Card titulo="Nova Solicitação">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    {/* Campos Simples */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Protocolo</label>
                         <input

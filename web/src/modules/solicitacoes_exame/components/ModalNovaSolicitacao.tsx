@@ -5,9 +5,10 @@ import TemplateNovaSolicitacao from './TemplateNovaSolicitacao'; // O form que a
 interface ModalNovaSolicitacaoProps {
     isOpen: boolean;
     onClose: () => void;
+    onSucesso: () => void;
 }
 
-export default function ModalNovaSolicitacao({ isOpen, onClose }: ModalNovaSolicitacaoProps) {
+export default function ModalNovaSolicitacao({ isOpen, onClose, onSucesso }: ModalNovaSolicitacaoProps) {
     if (!isOpen) return null;
 
     return (
@@ -25,7 +26,9 @@ export default function ModalNovaSolicitacao({ isOpen, onClose }: ModalNovaSolic
                 </div>
 
                 <div className="overflow-y-auto p-4 md:p-6 w-full">
-                    <TemplateNovaSolicitacao />
+                    <TemplateNovaSolicitacao
+                        onSucesso={onSucesso}
+                    />
                 </div>
             </div>
         </div>

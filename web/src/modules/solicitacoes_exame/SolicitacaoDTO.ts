@@ -23,7 +23,7 @@ export interface RequestSolicitacoesDTO {
     protocolo?: string,
     nomePaciente?: string,
     nomeProfissional?: string,
-    limit?: number,
+    limit?: string,
     page?: string
 }
 export interface Metadados {

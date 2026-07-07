@@ -1,7 +1,7 @@
 'use server'
 import { cookies } from 'next/headers';
 import { servicoExames } from '@/src/modules/exames/ExamesService';
-import { ExamesDTO, FiltrosBuscaExame } from '@/src/modules/exames/ExamesDTO';
+import { ExamesResponseDTO, FiltrosBuscaExame } from '@/src/modules/exames/ExamesDTO';
 
 export async function executarComSessao<T>(
     funcaoServico: (
@@ -23,7 +23,7 @@ export async function executarComSessao<T>(
 ;
 export async function buscarDadosExames (
     filtros: FiltrosBuscaExame
-): Promise<ExamesDTO> {
+): Promise<ExamesResponseDTO> {
     return executarComSessao(servicoExames, filtros);
 };
 

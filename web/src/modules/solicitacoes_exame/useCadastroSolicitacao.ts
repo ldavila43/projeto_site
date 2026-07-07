@@ -44,7 +44,7 @@ export function useCadastroSolicitacao(onSubmitAction: (dados: RequestPostSolici
         }));
     }
 
-    async function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent, onSucesso: () => void) {
         e.preventDefault();
         setSalvando(true);
         try {

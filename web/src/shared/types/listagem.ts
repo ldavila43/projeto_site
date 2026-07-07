@@ -23,6 +23,11 @@ export type CampoFiltroConfig<TFiltros> =
         name: keyof TFiltros & string;
         label: string;
         opcoes: { value: string; label: string }[];
+    }
+    | {
+        tipo: 'data';
+        name: keyof TFiltros & string;
+        label: string;
     };
 
 export type AcaoHeader = {

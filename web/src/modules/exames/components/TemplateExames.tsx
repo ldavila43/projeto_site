@@ -1,18 +1,39 @@
 'use client'
-import { ExamesDTO, FiltrosBuscaExame, Exames } from '@/src/modules/exames/ExamesDTO'
+import { useState } from 'react'
+import TemplateListagem from '@/src/shared/components/TemplateListagem';
+import { useListagem } from '@/src/shared/hooks/useListagem';
+import TabelaDados, { ColunaTabela } from '@/src/shared/components/TabelaDados'
+import { ExamesResponseDTO, FiltrosBuscaExame, Exames } from '@/src/modules/exames/ExamesDTO'
+import { Eye } from 'lucide-react';
+import { CampoFiltroConfig } from '@/src/shared/types/listagem';
 import { ReactNode } from 'react';
 import Card from '@/src/shared/components/Card'
 import CampoFiltro from '@/src/shared/components/CampoFiltro'
-import TabelaDados, { ColunaTabela } from '@/src/shared/components/TabelaDados'
 import { SearchIcon, Loader2 } from 'lucide-react'
-import { useExames } from '../useExames'; // Importando o Hook
+import { useExames } from '../useExames';
+import { buscarDadosExames } from '../examesActions'
 
-export interface ExamesProps {
-    funcao: (filtros: FiltrosBuscaExame) => Promise<ExamesDTO>,
-    acoesExtra?: (exame: Exames) => ReactNode,
-    exibirFiltroPaciente?: Boolean,
-    exibirFiltroProfissional?: Boolean
-}
+
+const camposFiltro: CampoFiltroConfig<FiltrosBuscaExame>[] = [
+    { tipo: 'texto', name: 'tipoExame', label: 'Tipo Exame' },
+    { tipo: 'texto', name: 'nomePaciente', label: 'Paciente' },
+    { tipo: 'texto', name: 'nomeProfissional', label: 'Profiasional' },
+    {
+        tipo: 'select',
+        name: 'status',
+        label: 'status',
+        opcoes: [
+            { value: 'AGUARDANDO ENVIO', label: 'Aguardando Envio' },
+            { value: 'EM ANÁLISE', label: 'Em Análise' },
+            { value: 'AGUARDANDO PROCESSAMENTO INTERNO', label: 'Aguardando Processamento Interno' },
+            { value: 'LIBERAÇÃO PENDENTE', label: 'Liberação pendente' },
+            { value: 'LIBERADO', label: 'Liberado' },
+            { value: 'CANCELADO', label: 'Cancelado' },
+        ]
+    },
+    { tipo: 'texto', name: 'protocolo', label: 'Protocolo' }
+];
+
 
 const colunas: ColunaTabela<Exames>[] = [
     { chave: 'protocolo', titulo: 'Protocolo', className: 'font-medium text-gray-800' },
@@ -40,112 +61,62 @@ const colunas: ColunaTabela<Exames>[] = [
     },
 ]
 
-export default function TemplateExames({ funcao, acoesExtra, exibirFiltroPaciente, exibirFiltroProfissional }: ExamesProps) {
-    const {
-        dados,
-        carregando,
-        filtrosBuscaExames,
-        handleChange,
-        handleLimite,
-        handlePagina,
-        handlePesquisar
-    } = useExames(funcao);
+export default function TemplateExames({dadosIni}: { dadosIni: ExamesResponseDTO }) {
+    const [modalAberto, setModalAberto] = useState(false);
+    const [solicitacaoSelecionada, setSolicitacaoSelecionada] = useState<string | null>(null);
+    const [refreshKey, setRefreshKey] = useState(0);
 
-    if (carregando) {
-        return (
-            <div className="flex items-center justify-center gap-2 py-16 text-gray-500">
-                <Loader2 className="animate-spin h-5 w-5" />
-                <span>Carregando exames...</span>
-            </div>
-        );
+    function handleAbrirDetalhes(exames: Exames) {
+        setSolicitacaoSelecionada(exames.idExame);
+        setModalAberto(true);
     }
 
+    const listagem = useListagem<FiltrosBuscaExame, ExamesResponseDTO, Exames>({
+        funcao: buscarDadosExames,
+        filtrosIniciais: {limit: '10', page: '1'},
+        obterItens: (res) => res.dados,
+        obterMetadados: (res) => res.metadados,
+        initialDados: dadosIni,
+        autoBuscar: true,
+        camposAutoBusca: [
+            'tipoExame',
+            'nomePaciente',
+            'nomeProfissional',
+            'status',
+            'protocolo'
+        ],
+    });
+
+    function handleFecharModal() {
+        setModalAberto(false);
+        setSolicitacaoSelecionada(null);
+    }
     return (
         <div>
-            <Card titulo='Exames'>
-                <div className="space-y-4">
-                    <div id="filtros" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                        <CampoFiltro
-                            label="Protocolo"
-                            id="protocolo"
-                            name="protocolo"
-                            value={filtrosBuscaExames.protocolo}
-                            onChange={handleChange}
-                        />
-                        {exibirFiltroPaciente && (
-                            <CampoFiltro
-                                label="Paciente"
-                                id="nomePaciente"
-                                name="nomePaciente"
-                                value={filtrosBuscaExames.nomePaciente}
-                                onChange={handleChange}
-                            />
-                        )}
-                        <CampoFiltro
-                            label="Tipo Exame"
-                            id="tipoExame"
-                            name="tipoExame"
-                            value={filtrosBuscaExames.tipoExame}
-                            onChange={handleChange}
-                        />
-                        {exibirFiltroProfissional && (
-                            <CampoFiltro
-                                label="Profissional"
-                                id="nomeProfissional"
-                                name="nomeProfissional"
-                                value={filtrosBuscaExames.nomeProfissional}
-                                onChange={handleChange}
-                            />
-                        )}
-                        <div className="flex flex-col">
-                            <label
-                                htmlFor={'status'}
-                                className="text-sm font-medium text-gray-700"
-                            >Status</label>
-
-                            <select
-                                id="status"
-                                name="status"
-                                value={filtrosBuscaExames.status}
-                                onChange={handleChange}
-                                className="border rounded-md p-2 text-sm"
-                            >
-                                <option value="">Todos</option>
-                                <option value="AGUARDANDO">Aguardando</option>
-                                <option value="EM ANÁLISE">Em análise</option>
-                                <option value="CONCLUÍDO">Concluido</option>
-                                <option value="CANCELADO">Cancelado</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className='flex justify-end'>
-                        <button
-                            type='button'
-                            onClick={handlePesquisar}
-                            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-                        >
-                            <SearchIcon className="h-4 w-4" />
-                            Pesquisar
-                        </button>
-                    </div>
-                </div>
-
-                <TabelaDados<Exames>
-                    dados={dados?.dados ?? []}
-                    colunas={colunas}
-                    metadados={{
-                        totalRegistros: dados?.metadados.totalRegistros ?? 0,
-                        totalPaginas: dados?.metadados.totalPaginas
-                    }}
-                    pagina={filtrosBuscaExames.page!}
-                    limite={filtrosBuscaExames.limit!}
-                    getKey={(exame) => exame.idExame}
-                    onMudarPagina={handlePagina}
-                    onMudarLimite={handleLimite}
-                    mensagemVazio="Nenhum exame encontrado."
-                    acoesExtra={acoesExtra}
-                />
-            </Card>
+            <TemplateListagem
+                titulo="Profissionais"
+                colunas={colunas}
+                camposFiltro={camposFiltro}
+                getKey={(t) => t.idExame}
+                dados={listagem.dados}
+                metadados={listagem.metadados}
+                carregando={listagem.carregando}
+                filtros={listagem.filtros}
+                onChangeFiltro={listagem.handleChange}
+                onPesquisar={listagem.handlePesquisar}
+                onMudarPagina={listagem.handlePagina}
+                onMudarLimite={listagem.handleLimite}
+                acoesExtra={(profissional) => (
+                    <button
+                        onClick={() => handleAbrirDetalhes(profissional)}
+                        className="p-1 text-blue-600 hover:text-blue-800"
+                    >
+                        <Eye className="h-4 w-4" />
+                    </button>
+                )}
+                acaoHeader={{ label: 'Nova Solicitação', onClick: () => setModalAberto(true) }}
+                mensagemVazio="Nenhuma solicitacação encontrada."
+            />
         </div>
     );
 }

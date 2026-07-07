@@ -1,12 +1,12 @@
 import { fetchAutenticado } from '@/src/shared/Service'
-import { ExamesDTO, FiltrosBuscaExame } from '@/src/modules/exames/ExamesDTO'
+import { ExamesResponseDTO, FiltrosBuscaExame } from '@/src/modules/exames/ExamesDTO'
 
 
 export async function servicoExames(
     token: string,
     filtros: FiltrosBuscaExame,
     perfilAtivo: string,
-): Promise<ExamesDTO>{
+): Promise<ExamesResponseDTO>{
     return fetchAutenticado(
         "GET",
         '/exames/dados',

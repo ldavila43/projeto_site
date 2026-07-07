@@ -43,9 +43,9 @@ export default function TabelaDados<T>({
     acoesExtra,
     tituloAcoes = 'Ações'
 }: TabelaDadosProps<T>) {
-    const paginaAtual = Number(pagina)
-    const disabled = paginaAtual <= 1
-    const proximo = paginaAtual >= (metadados.totalPaginas ?? 1)
+    const paginaAtual = Number(pagina) || 1;
+    const desabilitarAnterior = Boolean(paginaAtual <= 1);
+    const desabilitarProximo = Boolean(paginaAtual >= (metadados.totalPaginas ?? 1));
 
     return (
         <div>
@@ -126,9 +126,9 @@ export default function TabelaDados<T>({
             <div className="flex justify-center items-center gap-3 mt-4">
                 <button
                     type="button"
-                    disabled={disabled}
+                    disabled={desabilitarAnterior}
                     className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        disabled
+                        desabilitarAnterior
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200'
                             : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                     }`}
@@ -139,14 +139,14 @@ export default function TabelaDados<T>({
                 </button>
 
                 <span className="text-sm font-medium text-gray-700 px-2">
-                    Página {pagina} de {metadados.totalPaginas ?? 1}
+                    Página {paginaAtual} de {metadados.totalPaginas ?? 1}
                 </span>
 
                 <button
                     type="button"
-                    disabled={proximo}
+                    disabled={desabilitarProximo}
                     className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        proximo
+                        desabilitarProximo
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200'
                             : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                     }`}

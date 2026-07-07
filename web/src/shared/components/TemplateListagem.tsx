@@ -63,25 +63,46 @@ export default function TemplateListagem<T, TFiltros extends FiltrosBase>({
 
                     {camposFiltro.length > 0 && (
                         <div id="filtros" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {camposFiltro.map(campo =>
-                                campo.tipo === 'select' ? (
-                                    <div key={campo.name} className="flex flex-col">
-                                        <label htmlFor={campo.name} className="text-sm font-medium text-gray-700">
-                                            {campo.label}
-                                        </label>
-                                        <select
-                                            id={campo.name}
-                                            name={campo.name}
-                                            value={filtros[campo.name] ?? ''}
-                                            onChange={onChangeFiltro}
-                                            className="border rounded-md p-2 text-sm"
-                                        >
-                                            {campo.opcoes.map(opcao => (
-                                                <option key={opcao.value} value={opcao.value}>{opcao.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                ) : (
+                            {camposFiltro.map(campo => {
+                                
+                                if (campo.tipo === 'select') {
+                                    return (
+                                        <div key={campo.name} className="flex flex-col">
+                                            <label htmlFor={campo.name} className="text-sm font-medium text-gray-700">
+                                                {campo.label}
+                                            </label>
+                                            <select
+                                                id={campo.name}
+                                                name={campo.name}
+                                                value={filtros[campo.name] ?? ''}
+                                                onChange={onChangeFiltro}
+                                                className="border rounded-md p-2 text-sm"
+                                            >
+                                                {campo.opcoes.map(opcao => (
+                                                    <option key={opcao.value} value={opcao.value}>{opcao.label}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    );
+                                }
+                                if (campo.tipo === 'data') {
+                                    return (
+                                        <div key={campo.name} className="flex flex-col">
+                                            <label htmlFor={campo.name} className="text-sm font-medium text-gray-700">
+                                                {campo.label}
+                                            </label>
+                                            <input
+                                                type="date"
+                                                id={campo.name}
+                                                name={campo.name}
+                                                value={filtros[campo.name] ?? ''}
+                                                onChange={onChangeFiltro}
+                                                className="border rounded-md p-2 text-sm"
+                                            />
+                                        </div>
+                                    );
+                                }
+                                return (
                                     <CampoFiltro
                                         key={campo.name}
                                         label={campo.label}
@@ -90,8 +111,8 @@ export default function TemplateListagem<T, TFiltros extends FiltrosBase>({
                                         value={filtros[campo.name] ?? ''}
                                         onChange={onChangeFiltro}
                                     />
-                                )
-                            )}
+                                );
+                            })}
                         </div>
                     )}
 

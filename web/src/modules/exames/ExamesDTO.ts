@@ -1,5 +1,5 @@
 export interface Exames {
-    idExame: number,
+    idExame: string,
     protocolo: string,
     nomePaciente: string,
     tipoExame: string
@@ -26,7 +26,7 @@ export interface ExamesMetadados {
     totalPaginas: number
 }
 
-export interface ExamesDTO {
+export interface ExamesResponseDTO {
     dados: Exames[]
     metadados: ExamesMetadados
 }
