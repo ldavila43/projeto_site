@@ -5,9 +5,10 @@ import TemplateNovoTipoExame from './TemplateNovoTipoExame';
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onSucesso: () => void;
 }
 
-export default function ModalNovoTipoExame({ isOpen, onClose }: ModalProps) {
+export default function ModalNovoTipoExame({ isOpen, onClose, onSucesso }: ModalProps) {
     if (!isOpen) return null;
 
     return (
@@ -20,7 +21,9 @@ export default function ModalNovoTipoExame({ isOpen, onClose }: ModalProps) {
                     <X className="w-5 h-5" />
                 </button>
                 <div className="overflow-y-auto p-2">
-                    <TemplateNovoTipoExame />
+                    <TemplateNovoTipoExame
+                        onSucesso={onSucesso}
+                    />
                 </div>
             </div>
         </div>

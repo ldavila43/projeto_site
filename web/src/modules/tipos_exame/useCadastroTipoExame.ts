@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { RequestPostTipoExame } from './TiposExameDTO';
 
-export function useCadastroTipoExame(onSubmitAction: (dados: RequestPostTipoExame) => Promise<void>) {
+export function useCadastroTipoExame(onSubmitAction: (dados: RequestPostTipoExame) => Promise<void>, onSucesso: () => void) {
     const [form, setForm] = useState<RequestPostTipoExame>({
         nome: '',
         status: 'ATIVO',
@@ -22,6 +22,7 @@ export function useCadastroTipoExame(onSubmitAction: (dados: RequestPostTipoExam
         try {
             await onSubmitAction(form);
             alert('Tipo de exame cadastrado com sucesso!');
+            onSucesso();
         } catch (error) {
             console.error(error);
             alert('Erro ao cadastrar tipo de exame.');

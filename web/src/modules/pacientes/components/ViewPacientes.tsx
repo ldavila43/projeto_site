@@ -1,18 +1,14 @@
 'use client'
-import { PacienteDTO, FiltrosBuscaPaciente, PacienteResponse } from '@/src/modules/pacientes/PacientesDTO'
-import { ReactNode } from 'react';
-import Card from '@/src/shared/components/Card'
-import CampoFiltro from '@/src/shared/components/CampoFIltro'
-import TabelaDados, { ColunaTabela } from '@/src/shared/components/TabelaDados'
-import { SearchIcon } from 'lucide-react'
-import { usePacientes } from '../usePaciente';
-
-export interface PacienteProps {
-    funcao: (filtros: FiltrosBuscaPaciente) => Promise<PacienteResponse>;
-    initialDados: PacienteResponse;
-    acoesExtra?: (paciente: PacienteDTO) => ReactNode,
-    refreshKey: number
-}
+import { useState } from 'react';
+import TemplateListagem from '@/src/shared/components/TemplateListagem';
+import { useListagem } from '@/src/shared/hooks/useListagem';
+import { PacienteDTO, FiltrosBuscaPaciente, PacienteResponse } from '@/src/modules/pacientes/PacientesDTO';
+import { buscarDadosPacientes } from '@/src/modules/pacientes/pacientesActions';
+import { buscarDadosPessoa, atualizarPessoa } from '@/src/modules/pessoas/pessoasActions';
+import ModalDetalhesPessoa from '@/src/modules/pessoas/components/ModalDetalhesPessoa';
+import { Eye } from 'lucide-react';
+import { CampoFiltroConfig } from '@/src/shared/types/listagem';
+import { ColunaTabela } from '@/src/shared/components/TabelaDados';
 
 const colunas: ColunaTabela<PacienteDTO>[] = [
     { chave: 'nome', titulo: 'Nome Paciente', className: 'font-medium text-gray-800' },
@@ -29,56 +25,73 @@ const colunas: ColunaTabela<PacienteDTO>[] = [
     },
 ]
 
-export default function TemplatePacientes({ funcao, initialDados, acoesExtra, refreshKey = 0 }: PacienteProps) {
-    const {
-        dados,
-        carregando,
-        filtros,
-        handleChange,
-        handleLimite,
-        handlePagina,
-        handlePesquisar
-    } = usePacientes(funcao, initialDados, refreshKey);
+const camposFiltro: CampoFiltroConfig<FiltrosBuscaPaciente>[] = [
+    { tipo: 'texto', name: 'nome', label: 'Nome do Paciente' },
+];
+
+export default function TemplatePacientes({ dadosIni }: { dadosIni: PacienteResponse }) {
+
+    const [modalAberto, setModalAberto] = useState(false);
+    const [pessoaSelecionada, setPessoaSelecionada] = useState<string | null>(null);
+    const [refreshKey, setRefreshKey] = useState(0);
+    function handleAbrirDetalhes(paciente: PacienteDTO) {
+        setPessoaSelecionada(paciente.idPessoa);
+        setModalAberto(true);
+    }
+
+    const listagem = useListagem<FiltrosBuscaPaciente, PacienteResponse, PacienteDTO>({
+        funcao: buscarDadosPacientes,
+        filtrosIniciais: { nome: '', limit: '10', page: '1' },
+        obterItens: (res) => res.pacientes,
+        obterMetadados: (res) => res.metadados,
+        initialDados: dadosIni,
+        autoBuscar: true,
+        camposAutoBusca: ['nome'],
+    });
+
+    function handleFecharModal() {
+        setModalAberto(false);
+        setPessoaSelecionada(null);
+    }
 
     return (
         <div>
-            <Card titulo='Pacientes'>
-                <div className="space-y-4">
-                    <div id="filtros" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <CampoFiltro
-                            label="Nome"
-                            id="nome"
-                            name="nome"
-                            value={filtros.nome || ''}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className='flex justify-end'>
-                        <button
-                            type="button"
-                            onClick={handlePesquisar}
-                            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-                        >
-                            <SearchIcon className="h-4 w-4" />
-                            Pesquisar
-                        </button>
-                    </div>
-                </div>
-
-                <TabelaDados<PacienteDTO>
-                    dados={dados.pacientes}
-                    colunas={colunas}
-                    metadados={dados.metadados}
-                    pagina={filtros.page!}
-                    limite={filtros.limit!}
-                    getKey={(paciente) => paciente.idPessoa}
-                    onMudarPagina={handlePagina}
-                    onMudarLimite={handleLimite}
-                    carregando={carregando}
-                    mensagemVazio="Nenhum paciente encontrado."
-                    acoesExtra={acoesExtra}
+            <TemplateListagem
+                titulo="Profissionais"
+                colunas={colunas}
+                camposFiltro={camposFiltro}
+                getKey={(t) => t.idPaciente}
+                dados={listagem.dados}
+                metadados={listagem.metadados}
+                carregando={listagem.carregando}
+                filtros={listagem.filtros}
+                onChangeFiltro={listagem.handleChange}
+                onPesquisar={listagem.handlePesquisar}
+                onMudarPagina={listagem.handlePagina}
+                onMudarLimite={listagem.handleLimite}
+                acoesExtra={(profissional) => (
+                    <button
+                        onClick={() => handleAbrirDetalhes(profissional)}
+                        className="p-1 text-blue-600 hover:text-blue-800"
+                    >
+                        <Eye className="h-4 w-4" />
+                    </button>
+                )}
+                acaoHeader={{ label: 'Novo Paciente', onClick: () => setModalAberto(true) }}
+                mensagemVazio="Nenhum tipo de exame encontrado."
+            />
+            
+            {pessoaSelecionada && (
+                <ModalDetalhesPessoa
+                    isOpen={modalAberto}
+                    onClose={handleFecharModal}
+                    titulo="Detalhes do Paciente"
+                    funcaoBusca={buscarDadosPessoa}
+                    funcaoEdicao={atualizarPessoa}
+                    filtros={{ idPessoa: pessoaSelecionada }}
+                    onSucesso={() => setRefreshKey(prev => prev + 1)}
                 />
-            </Card>
+            )}
         </div>
     );
 }

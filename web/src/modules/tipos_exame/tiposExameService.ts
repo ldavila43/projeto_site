@@ -7,6 +7,7 @@ export async function servicoGetTiposExame(
     filtros: RequestGetTiposExame
 ): Promise<ResponseGetTiposExame>{
     return fetchAutenticado(
+        "GET",
         '/tipos-exame/dados',
         token,
         perfilAtivo,

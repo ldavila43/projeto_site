@@ -6,8 +6,12 @@ import { Save } from 'lucide-react';
 import { criarTipoExame } from '@/src/modules/tipos_exame/tiposExameActions';
 import { buscarDadosCategoriasExames } from '@/src/modules/categorias_exame/categoriasExameAction';
 
-export default function TemplateNovoTipoExame() {
-    const { form, salvando, handleFieldChange, handleSubmit } = useCadastroTipoExame(criarTipoExame);
+interface PropsTemplateTipoExame {
+    onSucesso: () => void
+}
+
+export default function TemplateNovoTipoExame( {onSucesso}: PropsTemplateTipoExame) {
+    const { form, salvando, handleFieldChange, handleSubmit } = useCadastroTipoExame(criarTipoExame, onSucesso);
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -34,8 +38,6 @@ export default function TemplateNovoTipoExame() {
                             return res.categorias.map(cat => ({ id: cat.idCategoria, label: cat.descricao }));
                         }}
                     />
-
-                    {/* Status */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                         <select

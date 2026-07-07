@@ -27,8 +27,10 @@ export interface OperadoresResponse {
 }
 
 export interface Rota {
+    idRota: string,
     label: string,
-    href: string
+    href: string,
+    subMenus?: Rota[]
 }
 
 export interface ResponseRotasPerfil {

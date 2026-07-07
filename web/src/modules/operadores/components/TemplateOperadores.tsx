@@ -1,7 +1,7 @@
 'use client'
 import { ReactNode } from 'react';
 import Card from '@/src/shared/components/Card';
-import CampoFiltro from '@/src/shared/components/CampoFIltro';
+import CampoFiltro from '@/src/shared/components/CampoFiltro';
 import TabelaDados, { ColunaTabela } from '@/src/shared/components/TabelaDados';
 import { SearchIcon, Loader2 } from 'lucide-react';
 import { Operador, OperadoresResponse, FiltroBuscaOperadores } from '@/src/modules/operadores/operadoresDTO';

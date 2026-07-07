@@ -1,6 +1,6 @@
 'use client'
 import Card from '@/src/shared/components/Card';
-import CampoFiltro from '@/src/shared/components/CampoFIltro';
+import CampoFiltro from '@/src/shared/components/CampoFiltro';
 import TabelaDados, { ColunaTabela } from '@/src/shared/components/TabelaDados';
 import { SearchIcon, Loader2, Plus } from 'lucide-react';
 import { SolicitacoesExame, GetSolicitacoesResponse, RequestSolicitacoesDTO } from '../SolicitacaoDTO';

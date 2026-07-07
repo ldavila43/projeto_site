@@ -19,6 +19,7 @@ export default async function DashboardLayout({ children }: Readonly<{children: 
     const perfilSalvoNoCookie = cookieStore.get('x-perfil-ativo')?.value;
 
     const linksDaSidebar = await buscaRotasOperadores();
+    console.log(linksDaSidebar.rotas.subRotas)
     
     const perfilEntrada = dadosIniciais.perfis.length > 0 ? dadosIniciais.perfis[0].id : undefined;
 

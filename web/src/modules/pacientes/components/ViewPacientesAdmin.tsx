@@ -24,18 +24,7 @@ export default function ViewPacientesAdmin({ dadosIni }: { dadosIni: PacienteRes
     return (
         <div>
             <TemplatePacientes
-                initialDados={dadosIni}
-                funcao={buscarDadosPacientes}
-                acoesExtra={(paciente) => (
-                    <button
-                        onClick={() => handleAbrirDetalhes(paciente)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 hover:text-blue-800 rounded-md transition-colors"
-                        title="Ver Detalhes"
-                    >
-                        <Eye className="w-5 h-5" />
-                    </button>
-                )}
-                refreshKey={refreshKey}
+                dadosIni={dadosIni}
             />
 
             {pessoaSelecionada && (
