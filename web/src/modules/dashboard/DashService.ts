@@ -3,12 +3,18 @@ import { DashProfissionaisDTO } from '@/src/modules/dashboard/ViewProfissionaisD
 import { DashAdminDTO } from '@/src/modules/dashboard/ViewAdminDTO'
 import { fetchAutenticado } from '@/src/shared/Service'
 
-export async function servicoDashboard(token: string): Promise<DashPacientesDTO> {
-    return fetchAutenticado<DashPacientesDTO>("GET", '/dashboard/pacientes/meus-dados', token);
+export async function servicoDashboard(token: string, perfilAtivo: string): Promise<DashPacientesDTO> {
+    return fetchAutenticado<DashPacientesDTO>(
+        "GET",
+        '/dashboard/pacientes/meus-dados',
+        token,
+        perfilAtivo
+    );
 }
 
 export async function servicoDashboardProfissional(
     token: string,
+    perfilAtivo: string,
     idPaciente?: string,
     dataIni?: string,
     dataFim?: string
@@ -17,33 +23,35 @@ export async function servicoDashboardProfissional(
         "GET",
         '/dashboard/profissionais/meus-dados',
         token,
-        undefined,
+        perfilAtivo,
         { idPaciente, dataIni, dataFim }
     );
 }
 
 export async function servicoDashboardAdmin(
     token: string,
+    perfilAtivo: string,
     ano?: string
 ): Promise<DashAdminDTO> {
     return fetchAutenticado<DashAdminDTO>(
         "GET",
         '/dashboard/admin',
         token,
-        undefined,
+        perfilAtivo,
         { ano }
     );
 }
 
 export async function servicoSolicitacoesDashboardAdmin(
     token: string,
+    perfilAtivo: string,
     ano?: string
 ): Promise<DashAdminDTO> {
     return fetchAutenticado<DashAdminDTO>(
         "GET",
         '/dashboard/admin/solicitacoes',
         token,
-        undefined,
+        perfilAtivo,
         { ano }
     );
 }

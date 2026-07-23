@@ -1,5 +1,5 @@
 import { fetchAutenticado } from '@/src/shared/Service'
-import { ResponseGetKits, RequestGetKits } from './KitsAmostraDTO';
+import { ResponseGetKits, RequestGetKits, RequestPostKitAmostra } from './KitsAmostraDTO';
 
 export async function servicoGetKits(
     token: string,
@@ -13,4 +13,19 @@ export async function servicoGetKits(
         perfilAtivo,
         filtros
     )
+}
+
+export async function servicoPostKit(
+    token: string,
+    perfilAtivo: string,
+    dados: RequestPostKitAmostra
+): Promise<void> {
+    console.log(dados)
+    return fetchAutenticado(
+        "POST",
+        '/kits/cadastro',
+        token,
+        perfilAtivo,
+        dados
+    );
 }

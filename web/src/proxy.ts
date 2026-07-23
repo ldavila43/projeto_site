@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PERFIS } from '@/src/shared/utils/PerfisEnum';
 
 const publicRoutes: string[] = ['/login', '/register', '/', '']
 
 const regrasDeAcesso: Record<string, number[]> = {
-    '/dashboard/admin': [0],
-    '/dashboard/profissional': [0, 1],
-    '/dashboard/colaborador': [0, 2],
-    '/cadastros': [0, 2],
-    '/profissionais': [0,2],
-    '/solicitacoes':[0,2],
-    '/kits-amostra':[0,2]
+    '/dashboard/admin': [PERFIS.ADMINISTRADOR],
+    '/dashboard/profissional': [PERFIS.ADMINISTRADOR, PERFIS.PROFISSIONAL],
+    '/dashboard/colaborador': [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR],
+    '/cadastros': [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR],
+    '/profissionais': [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR],
+    '/solicitacoes': [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR],
+    '/kits-amostra': [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR]
 };
 
 export default function proxy(req: NextRequest) {
@@ -35,7 +36,9 @@ export default function proxy(req: NextRequest) {
         return NextResponse.redirect(new URL('/login', req.url));
     }
 
-    if (!possuiPermissao(caminho, payload.perfis)) {
+    const perfilAtivo = Number(req.cookies.get('x-perfil-ativo')?.value);
+
+    if (!possuiPermissao(caminho, payload.perfis, perfilAtivo)) {
         return NextResponse.redirect(
             new URL('/dashboard', req.url)
         );
@@ -46,7 +49,8 @@ export default function proxy(req: NextRequest) {
 
 function possuiPermissao(
     caminho: string,
-    perfisUsuario: { id: number, nome: string }[] 
+    perfisUsuario: { id: number, nome: string }[],
+    perfilAtivo: number
 ): boolean {
     const regra = Object.entries(regrasDeAcesso).find(
         ([rota]) => caminho.startsWith(rota)
@@ -58,11 +62,13 @@ function possuiPermissao(
 
     const [, perfisPermitidos] = regra;
 
-    return perfisUsuario.some((perfil) => {
+    const perfilPertenceAoUsuario = perfisUsuario.some((perfil) => {
         const idPerfil = typeof perfil === 'object' ? perfil.id : perfil;
-        
-        return perfisPermitidos.includes(idPerfil);
+
+        return idPerfil === perfilAtivo;
     });
+
+    return perfilPertenceAoUsuario && perfisPermitidos.includes(perfilAtivo);
 }
 
 export const config = {
@@ -74,6 +80,7 @@ export const config = {
         '/exames/:path*',
         '/pacientes/:path*',
         '/profissionais/:path',
-        '/solicitacoes'
+        '/solicitacoes',
+        '/kits-amostra/:path*'
     ]
 };

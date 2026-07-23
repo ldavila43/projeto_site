@@ -57,13 +57,18 @@ const colunas: ColunaTabela<SolicitacoesExame>[] = [
 ];
 
 export default function TemplateSolicitacoes({dadosIni}: { dadosIni: GetSolicitacoesResponse }) {
-    const [modalAberto, setModalAberto] = useState(false);
+    const [modalNovaSolicitacaoAberto, setModalNovaSolicitacaoAberto] = useState(false);
+    const [modalDetalhesAberto, setModalDetalhesAberto] = useState(false);
     const [solicitacaoSelecionada, setSolicitacaoSelecionada] = useState<string | null>(null);
     const [refreshKey, setRefreshKey] = useState(0);
 
     function handleAbrirDetalhes(solicitacao: SolicitacoesExame) {
         setSolicitacaoSelecionada(solicitacao.idSolicitacao);
-        setModalAberto(true);
+        setModalDetalhesAberto(true);
+    }
+
+    function handleAbrirNovaSolicitacao(solicitacao: SolicitacoesExame) {
+        setModalNovaSolicitacaoAberto(true);
     }
 
     const listagem = useListagem<RequestSolicitacoesDTO, GetSolicitacoesResponse, SolicitacoesExame>({
@@ -83,8 +88,12 @@ export default function TemplateSolicitacoes({dadosIni}: { dadosIni: GetSolicita
         ],
     });
 
-    function handleFecharModal() {
-        setModalAberto(false);
+    function handleFecharModalNovaSolicitacaoAberto() {
+        setModalNovaSolicitacaoAberto(false);
+    }
+
+    function handleFecharModalDetalhes() {
+        setModalDetalhesAberto(false);
         setSolicitacaoSelecionada(null);
     }
 
@@ -111,14 +120,14 @@ export default function TemplateSolicitacoes({dadosIni}: { dadosIni: GetSolicita
                         <Eye className="h-4 w-4" />
                     </button>
                 )}
-                acaoHeader={{ label: 'Nova Solicitação', onClick: () => setModalAberto(true) }}
+                acaoHeader={{ label: 'Nova Solicitação', onClick: () => setModalNovaSolicitacaoAberto(true) }}
                 mensagemVazio="Nenhuma solicitacação encontrada."
             />
             
             <ModalNovaSolicitacao
-                isOpen={modalAberto}
-                onClose={() => setModalAberto(false)}
-                onSucesso={() => { setModalAberto(false); listagem.recarregar(); }}
+                isOpen={modalNovaSolicitacaoAberto}
+                onClose={() => setModalNovaSolicitacaoAberto(false)}
+                onSucesso={() => { setModalNovaSolicitacaoAberto(false); listagem.recarregar(); }}
             />
         </div>
     );

@@ -2,16 +2,17 @@
 
 import { useContext, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { actionLogout, actionAlterarPerfil } from '@/src/modules/auth/authActions';
+import { actionLogout } from '@/src/modules/auth/authActions';
 import { AuthContext } from '@/src/shared/AuthContext';
 import ModalDetalhesPessoa from '@/src/modules/pessoas/components/ModalDetalhesPessoa';
 import { buscarMeusDados, atualizarMeusDados } from '@/src/modules/pessoas/pessoasActions';
+import { PERFIS } from '@/src/shared/utils/PerfisEnum';
 
 const rotasPorPerfil = {
-    0: '/dashboard/admin',
-    1: '/dashboard/profissional',
-    2: '/dashboard/colaborador',
-    3: '/dashboard/paciente'
+    [PERFIS.ADMINISTRADOR]: '/dashboard/admin',
+    [PERFIS.PROFISSIONAL]: '/dashboard/profissional',
+    [PERFIS.COLABORADOR]: '/dashboard/colaborador',
+    [PERFIS.PACIENTE]: '/dashboard/paciente'
 } as const;
 
 export default function Header({ toggleMenu }: { toggleMenu: () => void }) {
@@ -33,8 +34,7 @@ export default function Header({ toggleMenu }: { toggleMenu: () => void }) {
             return null;
         }
         
-        contexto.alterarPerfil(novoPerfil);
-        await actionAlterarPerfil(novoPerfil);
+        await contexto.alterarPerfil(novoPerfil);
         
         const idRota = Number(novoPerfil);
         const novaRota = rotasPorPerfil[idRota as keyof typeof rotasPorPerfil];

@@ -1,8 +1,7 @@
-'use client' // O Next.js exige que páginas de erro sejam Client Components
+'use client'
 
 import { useEffect } from 'react';
 
-// O Next.js injeta automaticamente o objeto de erro e uma função para tentar recarregar
 interface ErrorPageProps {
     error: Error & { digest?: string };
     reset: () => void;
@@ -10,7 +9,6 @@ interface ErrorPageProps {
 
 export default function ErrorSistema({ error, reset }: ErrorPageProps) {
     
-    // Logamos o erro no console para o desenvolvedor conseguir rastrear o que houve
     useEffect(() => {
         console.error('Erro capturado pelo limite de erro (Error Boundary):', error);
     }, [error]);

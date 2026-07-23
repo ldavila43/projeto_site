@@ -27,12 +27,12 @@ const colunas: ColunaTabela<ProfissionalDTO>[] = [
 
 const camposFiltro: CampoFiltroConfig<FiltrosBuscaProfissional>[] = [
     { tipo: 'texto', name: 'nome', label: 'Nome do Profissional' },
+    { tipo: 'texto', name: 'documentoProfissional', label: 'Documento de Identificação' },
 ];
 
 export default function ViewProfissionais({ dadosIni }: { dadosIni: ProfissionaisResponse }){
     const [modalAberto, setModalAberto] = useState(false);
     const [pessoaSelecionada, setPessoaSelecionada] = useState<string | null>(null);
-    const [refreshKey, setRefreshKey] = useState(0);
     function handleAbrirDetalhes(paciente: ProfissionalDTO) {
         setPessoaSelecionada(paciente.idPessoa);
         setModalAberto(true);
@@ -40,12 +40,12 @@ export default function ViewProfissionais({ dadosIni }: { dadosIni: Profissionai
 
     const listagem = useListagem<FiltrosBuscaProfissional, ProfissionaisResponse, ProfissionalDTO>({
         funcao: buscarDadosProfissionais,
-        filtrosIniciais: { nome: '', limit: '10', page: '1' },
+        filtrosIniciais: { nome: '', documentoProfissional: '', limit: '10', page: '1' },
         obterItens: (res) => res.profissionais,
         obterMetadados: (res) => res.metadados,
         initialDados: dadosIni,
         autoBuscar: true,
-        camposAutoBusca: ['nome'],
+        camposAutoBusca: ['nome', 'documentoProfissional'],
     });
 
     function handleFecharModal() {
@@ -77,7 +77,7 @@ export default function ViewProfissionais({ dadosIni }: { dadosIni: Profissionai
                     </button>
                 )}
                 acaoHeader={{ label: 'Novo Profissional', onClick: () => setModalAberto(true) }}
-                mensagemVazio="Nenhum tipo de exame encontrado."
+                mensagemVazio="Nenhum profissional encontrado."
             />
             
             {pessoaSelecionada && (
@@ -88,7 +88,7 @@ export default function ViewProfissionais({ dadosIni }: { dadosIni: Profissionai
                     funcaoBusca={buscarDadosPessoa}
                     funcaoEdicao={atualizarPessoa}
                     filtros={{ idPessoa: pessoaSelecionada }}
-                    onSucesso={() => setRefreshKey(prev => prev + 1)}
+                    onSucesso={() => void listagem.recarregar()}
                 />
             )}
         </div>

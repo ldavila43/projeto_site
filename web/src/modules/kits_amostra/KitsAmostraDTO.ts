@@ -34,3 +34,24 @@ export interface ResponseGetKits {
     metadados: Metadados,
     kitsAmostra: KitAmostra[]
 }
+
+export const STATUS_KITS = [
+    'INATIVO',
+    'ATIVO',
+    'INVÁLIDO',
+    'DESCARTADO'
+] as const;
+
+export type StatusKit = (typeof STATUS_KITS)[number];
+
+export interface RequestPostKitAmostra {
+    codBgk: string;
+    idTipoKit: number;
+    local?: string;
+    codigoLote: string;
+    codApoio?: string;
+    dataValidade: string;
+    status: StatusKit;
+    idResponsavel?: string;
+    dataAtivacao?: string;
+}

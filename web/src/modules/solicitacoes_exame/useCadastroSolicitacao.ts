@@ -6,7 +6,7 @@ export function useCadastroSolicitacao(onSubmitAction: (dados: RequestPostSolici
         idPaciente: '',
         idProfissional: '',
         dataSolicitacao: new Date(),
-        statusSolicitacao: 'PENDENTE',
+        statusSolicitacao: 'SOLICITADO',
         protocolo: '',
         idKits: [],
         exames: []

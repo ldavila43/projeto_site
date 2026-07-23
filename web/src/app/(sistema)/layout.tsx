@@ -1,15 +1,15 @@
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { tokenExtractor } from '@/src/shared/tokenAction';
-import { PayloadUsuario } from '@/src/shared/PayloadUsuario';
 import UserContextDTO from '@/src/modules/auth/UserContextDTO';
 import { AuthProvider } from '@/src/shared/AuthContext';
 import DashboardShell from '@/src/shared/components/DashboardShell';
 import { buscaRotasOperadores } from '@/src/modules/operadores/operadoresActions';
+import { isPerfilID, obterPerfilPrioritario } from '@/src/shared/utils/PerfisEnum';
 
 export default async function DashboardLayout({ children }: Readonly<{children: React.ReactNode}>) {
 
-    const dadosIniciais: PayloadUsuario = await tokenExtractor();
+    const dadosIniciais = await tokenExtractor();
 
     if (!dadosIniciais) {
         return redirect('/login');
@@ -18,12 +18,14 @@ export default async function DashboardLayout({ children }: Readonly<{children: 
     const cookieStore = await cookies();
     const perfilSalvoNoCookie = cookieStore.get('x-perfil-ativo')?.value;
 
-    const linksDaSidebar = await buscaRotasOperadores();
-    console.log(linksDaSidebar.rotas.subRotas)
-    
-    const perfilEntrada = dadosIniciais.perfis.length > 0 ? dadosIniciais.perfis[0].id : undefined;
+    const perfilEntrada = obterPerfilPrioritario(dadosIniciais.perfis);
 
-    const perfilAtual = perfilSalvoNoCookie ? Number(perfilSalvoNoCookie) : perfilEntrada;
+    const perfilDoCookie = Number(perfilSalvoNoCookie);
+    const perfilAtual = isPerfilID(perfilDoCookie) && dadosIniciais.perfis.some(({ id }) => id === perfilDoCookie)
+        ? perfilDoCookie
+        : perfilEntrada;
+
+    const linksDaSidebar = await buscaRotasOperadores();
 
     const contextoUsuario: UserContextDTO = {
         id: dadosIniciais.id,

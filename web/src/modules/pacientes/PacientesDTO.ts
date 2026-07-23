@@ -10,6 +10,8 @@ export interface PacienteDTO{
 
 export type FiltrosBuscaPaciente = {
     nome?: string,
+    documentoPaciente?: string,
+    idProfissional?: string,
     limit?: string,
     page?: string
 }

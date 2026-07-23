@@ -9,6 +9,7 @@ export interface ProfissionalDTO{
 
 export type FiltrosBuscaProfissional = {
     nome?: string,
+    documentoProfissional?: string,
     limit?: string,
     page?: string
 }

@@ -22,8 +22,8 @@ export async function criarSolicitacao(
     filtros: RequestPostSolicitacaoDTO
 ): Promise<string>{
     return fetchAutenticado(
-        "PUT",
-        '/solicitacoes/dados',
+        "POST",
+        '/solicitacoes/cadastro',
         token,
         perfilAtivo,
         filtros

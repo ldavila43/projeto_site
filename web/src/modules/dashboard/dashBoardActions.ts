@@ -9,13 +9,14 @@ export async function buscarDadosPacientes(): Promise<DashPacientesDTO> {
     const cookieStore = await cookies();
 
     const token = cookieStore.get('session')?.value;
+    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
     if (!token) {
         throw new Error(
             "Sem token válido"
         )
     }
     try {
-        const dadosDash: DashPacientesDTO = await servicoDashboard(token);
+        const dadosDash: DashPacientesDTO = await servicoDashboard(token, perfilAtivo);
 
         return dadosDash;
     } catch (erro) {
@@ -32,6 +33,7 @@ export async function buscarDadosProfissionais(idPaciente?: string, dataIni?: st
     const cookieStore = await cookies();
 
     const token = cookieStore.get('session')?.value;
+    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
 
     if (!token) {
         throw new Error(
@@ -39,7 +41,13 @@ export async function buscarDadosProfissionais(idPaciente?: string, dataIni?: st
         )
     }
     try {
-        const dadosDash: DashProfissionaisDTO = await servicoDashboardProfissional(token, idPaciente, dataIni, dataFim);
+        const dadosDash: DashProfissionaisDTO = await servicoDashboardProfissional(
+            token,
+            perfilAtivo,
+            idPaciente,
+            dataIni,
+            dataFim
+        );
 
         return dadosDash;
     } catch (erro) {
@@ -54,6 +62,7 @@ export async function buscarDadosAdmin(ano?: string): Promise<DashAdminDTO> {
     const cookieStore = await cookies();
 
     const token = cookieStore.get('session')?.value;
+    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
 
     if (!token) {
         throw new Error(
@@ -62,7 +71,7 @@ export async function buscarDadosAdmin(ano?: string): Promise<DashAdminDTO> {
     }
 
     try {
-        const dadosDash: DashAdminDTO = await servicoDashboardAdmin(token, ano);
+        const dadosDash: DashAdminDTO = await servicoDashboardAdmin(token, perfilAtivo, ano);
 
         return dadosDash;
     } catch(erro) {
@@ -77,6 +86,7 @@ export async function buscarSolicitacoesAdmin(ano?: string): Promise<DashAdminDT
     const cookieStore = await cookies();
 
     const token = cookieStore.get('session')?.value;
+    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
 
     if (!token) {
         throw new Error(
@@ -85,7 +95,7 @@ export async function buscarSolicitacoesAdmin(ano?: string): Promise<DashAdminDT
     }
 
     try {
-        const dadosDash: DashAdminDTO = await servicoSolicitacoesDashboardAdmin(token, ano);
+        const dadosDash: DashAdminDTO = await servicoSolicitacoesDashboardAdmin(token, perfilAtivo, ano);
 
         return dadosDash;
     } catch(erro) {

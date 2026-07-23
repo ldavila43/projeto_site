@@ -1,5 +1,4 @@
 'use client'
-import { useState } from 'react';
 import TemplateListagem from '@/src/shared/components/TemplateListagem';
 import { useListagem } from '@/src/shared/hooks/useListagem';
 import { PacienteDTO, FiltrosBuscaPaciente, PacienteResponse } from '@/src/modules/pacientes/PacientesDTO';
@@ -24,31 +23,24 @@ const colunas: ColunaTabela<PacienteDTO>[] = [
 
 const camposFiltro: CampoFiltroConfig<FiltrosBuscaPaciente>[] = [
     { tipo: 'texto', name: 'nome', label: 'Nome do Paciente' },
+    { tipo: 'texto', name: 'documentoPaciente', label: 'Documento de Identificação' },
 ];
 
 export default function TemplatePacientes({ dadosIni }: { dadosIni: PacienteResponse }) {
-
-    const [modalAberto, setModalAberto] = useState(false);
-    const [pessoaSelecionada, setPessoaSelecionada] = useState<string | null>(null);
-    function handleAbrirDetalhes(paciente: PacienteDTO) {
-        setPessoaSelecionada(paciente.idPessoa);
-        setModalAberto(true);
-    }
-
     const listagem = useListagem<FiltrosBuscaPaciente, PacienteResponse, PacienteDTO>({
         funcao: buscarDadosPacientes,
-        filtrosIniciais: { nome: '', limit: '10', page: '1' },
+        filtrosIniciais: { nome: '', documentoPaciente: '', limit: '10', page: '1' },
         obterItens: (res) => res.pacientes,
         obterMetadados: (res) => res.metadados,
         initialDados: dadosIni,
         autoBuscar: true,
-        camposAutoBusca: ['nome'],
+        camposAutoBusca: ['nome', 'documentoPaciente'],
     });
 
     return (
         <div>
             <TemplateListagem
-                titulo="Profissionais"
+                titulo="Pacientes"
                 colunas={colunas}
                 camposFiltro={camposFiltro}
                 getKey={(t) => t.idPaciente}
@@ -60,8 +52,7 @@ export default function TemplatePacientes({ dadosIni }: { dadosIni: PacienteResp
                 onPesquisar={listagem.handlePesquisar}
                 onMudarPagina={listagem.handlePagina}
                 onMudarLimite={listagem.handleLimite}
-                acaoHeader={{ label: 'Novo Paciente', onClick: () => setModalAberto(true) }}
-                mensagemVazio="Nenhum tipo de exame encontrado."
+                mensagemVazio="Nenhum paciente encontrado."
             />
         </div>
     );

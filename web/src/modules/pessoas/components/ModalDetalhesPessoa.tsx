@@ -38,6 +38,7 @@ export default function ModalDetalhesPessoa({ isOpen, onClose, titulo, funcaoBus
         
         setSalvando(true);
         try {
+            console.log(formPessoa)
             await funcaoEdicao(formPessoa);
             await recarregar();
             setEditando(false);
@@ -123,8 +124,8 @@ export default function ModalDetalhesPessoa({ isOpen, onClose, titulo, funcaoBus
                                         {editando ? (
                                             <select value={formPessoa?.sexo || ''} onChange={e => handleChange('sexo', e.target.value)} className="w-full border rounded px-2 py-1 focus:outline-blue-500">
                                                 <option value="">Selecione</option>
-                                                <option value="M">Masculino</option>
-                                                <option value="F">Feminino</option>
+                                                <option value="MASCULINO">Masculino</option>
+                                                <option value="FEMININO">Feminino</option>
                                             </select>
                                         ) : ( dados.dadosPessoa.sexo || '-' )}
                                     </div>

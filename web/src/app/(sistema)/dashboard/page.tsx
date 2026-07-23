@@ -2,12 +2,13 @@
 import { useEffect, useContext } from 'react';
 import { AuthContext } from '@/src/shared/AuthContext';
 import { useRouter } from 'next/navigation'
+import { PERFIS } from '@/src/shared/utils/PerfisEnum';
 
 const rotasPorPerfil = {
-    0: '/dashboard/admin',
-    1: '/dashboard/profissional',
-    2: '/dashboard/colaborador',
-    3: '/dashboard/paciente'
+    [PERFIS.ADMINISTRADOR]: '/dashboard/admin',
+    [PERFIS.PROFISSIONAL]: '/dashboard/profissional',
+    [PERFIS.COLABORADOR]: '/dashboard/colaborador',
+    [PERFIS.PACIENTE]: '/dashboard/paciente'
 } as const;
 
 

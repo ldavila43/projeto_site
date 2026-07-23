@@ -20,6 +20,7 @@ export async function servicoPatchPesosas(
     perfilAtivo: string,
     dados?: Partial<PessoaDTO>
 ): Promise<string> {
+    console.log(dados)
     return fetchAutenticado(
         'PATCH',
         `/pessoas/${dados?.idPessoa}`,

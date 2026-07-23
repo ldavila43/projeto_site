@@ -27,13 +27,13 @@ const colunas: ColunaTabela<PacienteDTO>[] = [
 
 const camposFiltro: CampoFiltroConfig<FiltrosBuscaPaciente>[] = [
     { tipo: 'texto', name: 'nome', label: 'Nome do Paciente' },
+    { tipo: 'texto', name: 'documentoPaciente', label: 'Documento de Identificação' },
 ];
 
 export default function TemplatePacientes({ dadosIni }: { dadosIni: PacienteResponse }) {
 
     const [modalAberto, setModalAberto] = useState(false);
     const [pessoaSelecionada, setPessoaSelecionada] = useState<string | null>(null);
-    const [refreshKey, setRefreshKey] = useState(0);
     function handleAbrirDetalhes(paciente: PacienteDTO) {
         setPessoaSelecionada(paciente.idPessoa);
         setModalAberto(true);
@@ -41,12 +41,12 @@ export default function TemplatePacientes({ dadosIni }: { dadosIni: PacienteResp
 
     const listagem = useListagem<FiltrosBuscaPaciente, PacienteResponse, PacienteDTO>({
         funcao: buscarDadosPacientes,
-        filtrosIniciais: { nome: '', limit: '10', page: '1' },
+        filtrosIniciais: { nome: '', documentoPaciente: '', limit: '10', page: '1' },
         obterItens: (res) => res.pacientes,
         obterMetadados: (res) => res.metadados,
         initialDados: dadosIni,
         autoBuscar: true,
-        camposAutoBusca: ['nome'],
+        camposAutoBusca: ['nome', 'documentoPaciente'],
     });
 
     function handleFecharModal() {
@@ -57,7 +57,7 @@ export default function TemplatePacientes({ dadosIni }: { dadosIni: PacienteResp
     return (
         <div>
             <TemplateListagem
-                titulo="Profissionais"
+                titulo="Pacientes"
                 colunas={colunas}
                 camposFiltro={camposFiltro}
                 getKey={(t) => t.idPaciente}
@@ -78,7 +78,7 @@ export default function TemplatePacientes({ dadosIni }: { dadosIni: PacienteResp
                     </button>
                 )}
                 acaoHeader={{ label: 'Novo Paciente', onClick: () => setModalAberto(true) }}
-                mensagemVazio="Nenhum tipo de exame encontrado."
+                mensagemVazio="Nenhum paciente encontrado."
             />
             
             {pessoaSelecionada && (
@@ -89,7 +89,7 @@ export default function TemplatePacientes({ dadosIni }: { dadosIni: PacienteResp
                     funcaoBusca={buscarDadosPessoa}
                     funcaoEdicao={atualizarPessoa}
                     filtros={{ idPessoa: pessoaSelecionada }}
-                    onSucesso={() => setRefreshKey(prev => prev + 1)}
+                    onSucesso={() => void listagem.recarregar()}
                 />
             )}
         </div>
