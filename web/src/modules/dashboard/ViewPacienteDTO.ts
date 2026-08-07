@@ -3,7 +3,7 @@ export interface Exames{
     protocolo: string,
     tipoExame: string,
     status: string,
-    dataSolicitacao: Date
+    dataSolicitacao: string
 }
 
 export interface Estatisticas{

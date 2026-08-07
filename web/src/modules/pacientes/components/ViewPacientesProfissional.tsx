@@ -5,6 +5,7 @@ import { PacienteDTO, FiltrosBuscaPaciente, PacienteResponse } from '@/src/modul
 import { buscarDadosPacientes } from '@/src/modules/pacientes/pacientesActions';
 import { CampoFiltroConfig } from '@/src/shared/types/listagem';
 import { ColunaTabela } from '@/src/shared/components/TabelaDados';
+import { formatarData } from '@/src/shared/utils/formatarData';
 
 const colunas: ColunaTabela<PacienteDTO>[] = [
     { chave: 'nome', titulo: 'Nome Paciente', className: 'font-medium text-gray-800' },
@@ -12,12 +13,12 @@ const colunas: ColunaTabela<PacienteDTO>[] = [
     {
         chave: 'criadoEm',
         titulo: 'Criado Em',
-        render: (paciente) => new Date(paciente.criadoEm).toLocaleDateString('pt-BR')
+        render: (paciente) => formatarData(paciente.criadoEm)
     },
     {
         chave: 'atualizadoEm',
         titulo: 'Atualizado Em',
-        render: (paciente) => new Date(paciente.atualizadoEm).toLocaleDateString('pt-BR')
+        render: (paciente) => formatarData(paciente.atualizadoEm)
     },
 ]
 
@@ -47,9 +48,11 @@ export default function TemplatePacientes({ dadosIni }: { dadosIni: PacienteResp
                 dados={listagem.dados}
                 metadados={listagem.metadados}
                 carregando={listagem.carregando}
+                erro={listagem.erro}
                 filtros={listagem.filtros}
                 onChangeFiltro={listagem.handleChange}
                 onPesquisar={listagem.handlePesquisar}
+                onLimparFiltros={listagem.handleLimparFiltros}
                 onMudarPagina={listagem.handlePagina}
                 onMudarLimite={listagem.handleLimite}
                 mensagemVazio="Nenhum paciente encontrado."

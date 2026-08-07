@@ -1,8 +1,8 @@
 export default interface CadastroDTO {
-    nome: string,
-    documentoIdentificacao: string,
-    dataNascimento: Date,
-    sexo: string,
-    etnia: string,
-    senha: string
+    nome: string;
+    documentoIdentificacao: string;
+    dataNascimento: string;
+    sexo: 'MASCULINO' | 'FEMININO';
+    etnia: string;
+    senha: string;
 }

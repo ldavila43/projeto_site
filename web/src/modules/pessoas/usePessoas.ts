@@ -27,9 +27,10 @@ export function useModalPessoa(
 
     useEffect(() => {
         if (isOpen) {
-            carregarDados();
-        } else {
-            setDados(prev => prev !== null ? null : prev);
+            const timer = setTimeout(() => {
+                void carregarDados();
+            }, 0);
+            return () => clearTimeout(timer);
         }
     }, [isOpen, carregarDados]);
 

@@ -6,5 +6,5 @@ export default interface AuthContextDTO {
     nome: string,
     perfisDisponiveis: Perfil[]
     perfilAtivo: PerfilID | null,
-    alterarPerfil: (novoPerfil: string) => void
+    alterarPerfil: (novoPerfil: string) => Promise<void>
 }

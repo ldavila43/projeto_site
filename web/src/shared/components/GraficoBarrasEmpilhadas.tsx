@@ -2,13 +2,13 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 const CORES = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
-interface GraficoBarrasProps {
-    dados: any[];
+interface GraficoBarrasProps<T extends object> {
+    dados: T[];
     chaveX: string;
     chavesY: string[];
 }
 
-export function GraficoBarrasEmpilhadas({ dados, chaveX, chavesY }: GraficoBarrasProps) {
+export function GraficoBarrasEmpilhadas<T extends object>({ dados, chaveX, chavesY }: GraficoBarrasProps<T>) {
     return (
         <div className="w-full h-72 mt-4">
             <ResponsiveContainer width="100%" height="100%">

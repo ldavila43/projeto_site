@@ -1,8 +1,31 @@
 'use client'
-import { useState, useEffect } from 'react';
-import { X, User, Phone, Mail, MapPin, Loader2, Edit2, Save } from 'lucide-react';
-import { ResponsePessoaDTO, PessoaDTO } from '../pessoasDTO';
+import { useState } from 'react';
+import { X, User, Loader2, Edit2, Save } from 'lucide-react';
+import {
+    PessoaDTO,
+    ResponsePessoaDTO,
+    TIPOS_EMAIL,
+    TIPOS_TELEFONE,
+    TipoEmail,
+    TipoTelefone
+} from '../pessoasDTO';
 import { useModalPessoa } from '../usePessoas';
+import GerenciadorContatos from './GerenciadorContatos';
+import GerenciadorEnderecos, {
+    DadosFormularioEndereco
+} from './GerenciadorEnderecos';
+import {
+    atualizarEmailPessoa,
+    atualizarEnderecoPessoa,
+    atualizarTelefonePessoa,
+    cadastrarEmailPessoa,
+    cadastrarEnderecoPessoa,
+    cadastrarTelefonePessoa,
+    excluirEmailPessoa,
+    excluirEnderecoPessoa,
+    excluirTelefonePessoa
+} from '../pessoasActions';
+import { formatarData } from '@/src/shared/utils/formatarData';
 
 export interface ModalDetalhesPessoaProps {
     isOpen: boolean;
@@ -12,20 +35,26 @@ export interface ModalDetalhesPessoaProps {
     funcaoEdicao?: (dados: PessoaDTO) => Promise<string>;
     onSucesso?: (dadosAtualizados: PessoaDTO) => void;
     filtros?: object;
+    permitirEditarDocumento?: boolean;
+    permitirEditarContatos?: boolean;
 }
 
-export default function ModalDetalhesPessoa({ isOpen, onClose, titulo, funcaoBusca, funcaoEdicao, onSucesso, filtros = {} }: ModalDetalhesPessoaProps) {
+export default function ModalDetalhesPessoa({
+    isOpen,
+    onClose,
+    titulo,
+    funcaoBusca,
+    funcaoEdicao,
+    onSucesso,
+    filtros = {},
+    permitirEditarDocumento = true,
+    permitirEditarContatos = true
+}: ModalDetalhesPessoaProps) {
     const { dados, carregando, recarregar } = useModalPessoa(isOpen, funcaoBusca, filtros);
     
     const [editando, setEditando] = useState(false);
     const [salvando, setSalvando] = useState(false);
     const [formPessoa, setFormPessoa] = useState<PessoaDTO | null>(null);
-
-    useEffect(() => {
-        if (dados) {
-            setFormPessoa(dados.dadosPessoa);
-        }
-    }, [dados]);
 
     function handleChange(campo: keyof PessoaDTO, valor: string) {
         if (formPessoa) {
@@ -38,7 +67,6 @@ export default function ModalDetalhesPessoa({ isOpen, onClose, titulo, funcaoBus
         
         setSalvando(true);
         try {
-            console.log(formPessoa)
             await funcaoEdicao(formPessoa);
             await recarregar();
             setEditando(false);
@@ -58,6 +86,101 @@ export default function ModalDetalhesPessoa({ isOpen, onClose, titulo, funcaoBus
     function cancelarEdicao() {
         setEditando(false);
         setFormPessoa(dados?.dadosPessoa || null); // Restaura os dados originais
+    }
+
+    function obterIdPessoa(): string {
+        if (!dados?.dadosPessoa.idPessoa) {
+            throw new Error('Pessoa não informada.');
+        }
+        return dados.dadosPessoa.idPessoa;
+    }
+
+    async function adicionarEmail(email: string, tipo: string) {
+        await cadastrarEmailPessoa({
+            idPessoa: obterIdPessoa(),
+            email,
+            tipo: tipo as TipoEmail
+        });
+        await recarregar();
+    }
+
+    async function editarEmail(idEmail: number, email: string, tipo: string) {
+        await atualizarEmailPessoa({
+            idPessoa: obterIdPessoa(),
+            idEmail,
+            email,
+            tipo: tipo as TipoEmail
+        });
+        await recarregar();
+    }
+
+    async function excluirEmail(idEmail: number) {
+        await excluirEmailPessoa({
+            idPessoa: obterIdPessoa(),
+            idEmail
+        });
+        await recarregar();
+    }
+
+    async function adicionarTelefone(telefone: string, tipo: string) {
+        await cadastrarTelefonePessoa({
+            idPessoa: obterIdPessoa(),
+            telefone,
+            tipo: tipo as TipoTelefone
+        });
+        await recarregar();
+    }
+
+    async function editarTelefone(
+        idTelefone: number,
+        telefone: string,
+        tipo: string
+    ) {
+        await atualizarTelefonePessoa({
+            idPessoa: obterIdPessoa(),
+            idTelefone,
+            telefone,
+            tipo: tipo as TipoTelefone
+        });
+        await recarregar();
+    }
+
+    async function excluirTelefone(idTelefone: number) {
+        await excluirTelefonePessoa({
+            idPessoa: obterIdPessoa(),
+            idTelefone
+        });
+        await recarregar();
+    }
+
+    async function adicionarEndereco(
+        endereco: DadosFormularioEndereco & { idMunicipio: number }
+    ) {
+        await cadastrarEnderecoPessoa({
+            idPessoa: obterIdPessoa(),
+            ...endereco
+        });
+        await recarregar();
+    }
+
+    async function editarEndereco(
+        idEndereco: number,
+        endereco: DadosFormularioEndereco
+    ) {
+        await atualizarEnderecoPessoa({
+            idPessoa: obterIdPessoa(),
+            idEndereco,
+            ...endereco
+        });
+        await recarregar();
+    }
+
+    async function excluirEndereco(idEndereco: number) {
+        await excluirEnderecoPessoa({
+            idPessoa: obterIdPessoa(),
+            idEndereco
+        });
+        await recarregar();
     }
 
     if (!isOpen) return null;
@@ -89,7 +212,13 @@ export default function ModalDetalhesPessoa({ isOpen, onClose, titulo, funcaoBus
                                     </div>
                                     
                                     {funcaoEdicao && !editando && (
-                                        <button onClick={() => setEditando(true)} className="text-sm text-gray-500 hover:text-blue-600 flex items-center gap-1">
+                                        <button
+                                            onClick={() => {
+                                                setFormPessoa(dados.dadosPessoa);
+                                                setEditando(true);
+                                            }}
+                                            className="text-sm text-gray-500 hover:text-blue-600 flex items-center gap-1"
+                                        >
                                             <Edit2 className="w-4 h-4" /> Editar
                                         </button>
                                     )}
@@ -115,9 +244,22 @@ export default function ModalDetalhesPessoa({ isOpen, onClose, titulo, funcaoBus
                                     </div>
                                     <div>
                                         <span className="font-semibold text-gray-600 block mb-1">Documento:</span>
-                                        {editando ? (
+                                        {editando && permitirEditarDocumento ? (
                                             <input type="text" value={formPessoa?.documentoIdentificacao || ''} onChange={e => handleChange('documentoIdentificacao', e.target.value)} className="w-full border rounded px-2 py-1 focus:outline-blue-500" />
                                         ) : ( dados.dadosPessoa.documentoIdentificacao || '-' )}
+                                    </div>
+                                    <div>
+                                        <span className="font-semibold text-gray-600 block mb-1">Data de nascimento:</span>
+                                        {editando ? (
+                                            <input
+                                                type="date"
+                                                value={formPessoa?.dataNascimento?.slice(0, 10) || ''}
+                                                onChange={e => handleChange('dataNascimento', e.target.value)}
+                                                className="w-full border rounded px-2 py-1 focus:outline-blue-500"
+                                            />
+                                        ) : (
+                                            formatarData(dados.dadosPessoa.dataNascimento)
+                                        )}
                                     </div>
                                     <div>
                                         <span className="font-semibold text-gray-600 block mb-1">Sexo:</span>
@@ -138,59 +280,42 @@ export default function ModalDetalhesPessoa({ isOpen, onClose, titulo, funcaoBus
                                 </div>
                             </div>
 
-                            {/* Sessão: Contatos (Telefones e Emails) */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="bg-white p-4 rounded-md shadow-sm border border-gray-100">
-                                    <div className="flex items-center gap-2 text-green-600 mb-3 border-b pb-2">
-                                        <Phone className="w-5 h-5" />
-                                        <h3 className="font-medium">Telefones</h3>
-                                    </div>
-                                    {dados.telefones.length > 0 ? (
-                                        <ul className="space-y-2 text-sm text-gray-700">
-                                            {dados.telefones.map(tel => (
-                                                <li key={tel.idPessoa + tel.telefone}>
-                                                    <span className="font-medium text-gray-500">[{tel.tipo}]</span> {tel.telefone}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    ) : <span className="text-sm text-gray-400">Nenhum telefone cadastrado.</span>}
-                                </div>
+                                <GerenciadorContatos
+                                    variante="telefone"
+                                    contatos={dados.telefones.map((telefone) => ({
+                                        id: telefone.idTelefone,
+                                        valor: telefone.telefone,
+                                        tipo: telefone.tipo
+                                    }))}
+                                    tiposPermitidos={TIPOS_TELEFONE}
+                                    onAdicionar={adicionarTelefone}
+                                    onEditar={editarTelefone}
+                                    onExcluir={excluirTelefone}
+                                    somenteLeitura={!permitirEditarContatos}
+                                />
 
-                                <div className="bg-white p-4 rounded-md shadow-sm border border-gray-100">
-                                    <div className="flex items-center gap-2 text-orange-600 mb-3 border-b pb-2">
-                                        <Mail className="w-5 h-5" />
-                                        <h3 className="font-medium">E-mails</h3>
-                                    </div>
-                                    {dados.emails.length > 0 ? (
-                                        <ul className="space-y-2 text-sm text-gray-700">
-                                            {dados.emails.map(email => (
-                                                <li key={email.idPessoa + email.email}>
-                                                    <span className="font-medium text-gray-500">[{email.tipo}]</span> {email.email}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    ) : <span className="text-sm text-gray-400">Nenhum e-mail cadastrado.</span>}
-                                </div>
+                                <GerenciadorContatos
+                                    variante="email"
+                                    contatos={dados.emails.map((email) => ({
+                                        id: email.idEmail,
+                                        valor: email.email,
+                                        tipo: email.tipo
+                                    }))}
+                                    tiposPermitidos={TIPOS_EMAIL}
+                                    onAdicionar={adicionarEmail}
+                                    onEditar={editarEmail}
+                                    onExcluir={excluirEmail}
+                                    somenteLeitura={!permitirEditarContatos}
+                                />
                             </div>
 
-                            <div className="bg-white p-4 rounded-md shadow-sm border border-gray-100">
-                                <div className="flex items-center gap-2 text-purple-600 mb-3 border-b pb-2">
-                                    <MapPin className="w-5 h-5" />
-                                    <h3 className="font-medium">Endereços</h3>
-                                </div>
-                                {dados.enderecos.length > 0 ? (
-                                    <div className="space-y-4">
-                                        {dados.enderecos.map(end => (
-                                            <div key={end.idEndereco} className="text-sm text-gray-700 bg-gray-50 p-3 rounded border">
-                                                <div className="font-medium text-gray-800 mb-1">{end.tipoEndereco}</div>
-                                                <div>{end.logradouro}, {end.numero} {end.complemento && `- ${end.complemento}`}</div>
-                                                <div>{end.bairro} - {end.cidade}/{end.estado} - {end.cep}</div>
-                                                <div>{end.pais}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : <span className="text-sm text-gray-400">Nenhum endereço cadastrado.</span>}
-                            </div>
+                            <GerenciadorEnderecos
+                                enderecos={dados.enderecos}
+                                onAdicionar={adicionarEndereco}
+                                onEditar={editarEndereco}
+                                onExcluir={excluirEndereco}
+                            />
                         </>
                     )}
                 </div>

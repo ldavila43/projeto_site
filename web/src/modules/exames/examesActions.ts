@@ -1,29 +1,20 @@
 'use server'
-import { cookies } from 'next/headers';
-import { servicoExames } from '@/src/modules/exames/ExamesService';
-import { ExamesResponseDTO, FiltrosBuscaExame } from '@/src/modules/exames/ExamesDTO';
 
-export async function executarComSessao<T>(
-    funcaoServico: (
-        token: string,
-        filtros: FiltrosBuscaExame,
-        perfilAtivo: string
-    ) => Promise<T>,
-    filtros: FiltrosBuscaExame
-): Promise<T> {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('session')?.value;
-    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? ''
-    if (!token) {
-        throw new Error("Sem token válido");
-    }
+import { servicoExames, servicoVisaoGeralExame } from './ExamesService';
+import { ExamesResponseDTO, FiltrosBuscaExame, VisaoGeralExame } from './ExamesDTO';
+import { obterSessao } from '@/src/shared/server/sessao';
 
-    return funcaoServico(token, filtros, perfilAtivo);
-}
-;
-export async function buscarDadosExames (
+export async function buscarDadosExames(
     filtros: FiltrosBuscaExame
 ): Promise<ExamesResponseDTO> {
-    return executarComSessao(servicoExames, filtros);
-};
+    const { token, perfilAtivo } = await obterSessao();
+    return servicoExames(token, String(perfilAtivo), filtros);
+}
 
+export async function buscarVisaoGeralExame(idExame: number): Promise<VisaoGeralExame> {
+    if (!Number.isInteger(idExame) || idExame <= 0) {
+        throw new Error('Exame inválido');
+    }
+    const { token, perfilAtivo } = await obterSessao();
+    return servicoVisaoGeralExame(token, String(perfilAtivo), idExame);
+}

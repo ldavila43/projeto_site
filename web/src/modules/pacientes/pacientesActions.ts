@@ -1,28 +1,23 @@
 'use server'
-import { cookies } from 'next/headers';
-import { servicoGetPacientes } from '@/src/modules/pacientes/PacientesService';
-import { PacienteDTO, FiltrosBuscaPaciente, PacienteResponse } from '@/src/modules/pacientes/PacientesDTO';
 
-export async function executarComSessao<T>(
-    funcaoServico: (
-        token: string,
-        perfilAtivo: string,
-        filtros: FiltrosBuscaPaciente
-    ) => Promise<T>,
-    filtros: FiltrosBuscaPaciente
-): Promise<T> {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('session')?.value;
-    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? ''
-    if (!token) {
-        throw new Error("Sem token válido");
-    }
-
-    return funcaoServico(token, perfilAtivo, filtros);
-};
+import { servicoGetPacientes, servicoPostPaciente } from './PacientesService';
+import { FiltrosBuscaPaciente, PacienteResponse, RequestPostPaciente } from './PacientesDTO';
+import { obterSessao } from '@/src/shared/server/sessao';
+import { PERFIS } from '@/src/shared/utils/PerfisEnum';
 
 export async function buscarDadosPacientes(
     filtros: FiltrosBuscaPaciente
 ): Promise<PacienteResponse> {
-    return executarComSessao(servicoGetPacientes, filtros);
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR, PERFIS.PROFISSIONAL]
+    });
+    return servicoGetPacientes(token, String(perfilAtivo), filtros);
+}
+
+export async function cadastrarPaciente(dados: RequestPostPaciente): Promise<string> {
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR]
+    });
+    const resposta = await servicoPostPaciente(token, String(perfilAtivo), dados);
+    return resposta.message;
 }

@@ -1,5 +1,9 @@
 import { fetchAutenticado } from '@/src/shared/Service'
-import { FiltrosBuscaProfissional, ProfissionaisResponse } from './profissionaisDTO';
+import { FiltrosBuscaProfissional, ProfissionaisResponse, RequestPostProfissional } from './profissionaisDTO';
+
+interface RespostaCadastroProfissional {
+    message: string;
+}
 
 
 export async function servicoGetProfissionais(
@@ -14,4 +18,18 @@ export async function servicoGetProfissionais(
         perfilAtivo,
         filtros
     )
+}
+
+export async function servicoPostProfissional(
+    token: string,
+    perfilAtivo: string,
+    dados: RequestPostProfissional
+): Promise<RespostaCadastroProfissional> {
+    return fetchAutenticado(
+        'POST',
+        '/profissionais-saude/cadastro',
+        token,
+        perfilAtivo,
+        dados
+    );
 }

@@ -27,10 +27,14 @@ export function validarCadastro(dados: FormDTO): CadastroDTO {
         );
     }
 
+    if (dados.sexo !== 'MASCULINO' && dados.sexo !== 'FEMININO') {
+        throw new Error('Selecione um sexo válido.');
+    }
+
     return {
         nome: dados.nome,
         documentoIdentificacao: dados.documentoIdentificacao,
-        dataNascimento: new Date(dados.dataNascimento),
+        dataNascimento: dados.dataNascimento,
         sexo: dados.sexo,
         etnia: dados.etnia,
         senha: dados.senha

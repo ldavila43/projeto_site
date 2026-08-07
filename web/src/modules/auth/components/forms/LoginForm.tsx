@@ -6,7 +6,6 @@ import { validarLogin } from '@/src/shared/utils/ValidacoesLogin';
 import { actionLogin } from '@/src/modules/auth/authActions';
 import Input from '@/src/shared/components/Input';
 import Button from '@/src/shared/components/button';
-import Link from 'next/link'
 
 export default function LoginForm() {
     const router = useRouter();
@@ -69,7 +68,6 @@ export default function LoginForm() {
                         <span>Senha:</span>
                         <Input required name="senhaLogin" type='password' className={submited && !formData.senhaLogin ? 'border-red-500': ''} value={formData.senhaLogin} onChange={handleChange} />
                         <Button className='bg-[#1E3A5F] text-white hover:bg-[#2E6DA4] w-full' type="submit">Fazer Login</Button>
-                        <Link className='text-center' href="/register">cadastre-se</Link>
                     </div>
             </div>
         </form>

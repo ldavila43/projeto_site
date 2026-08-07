@@ -13,10 +13,24 @@ interface AsyncAutocompleteProps {
     value: string | number | null; // O ID selecionado
     onChange: (id: string | number, label: string) => void;
     fetcher: (search: string) => Promise<AutocompleteOption[]>; // Função que busca na API
+    disabled?: boolean;
+    required?: boolean;
+    onInputChange?: (search: string) => void;
+    initialSearchTerm?: string;
 }
 
-export default function AsyncAutocomplete({ label, placeholder, value, onChange, fetcher }: AsyncAutocompleteProps) {
-    const [searchTerm, setSearchTerm] = useState('');
+export default function AsyncAutocomplete({
+    label,
+    placeholder,
+    value,
+    onChange,
+    fetcher,
+    disabled = false,
+    required = false,
+    onInputChange,
+    initialSearchTerm = ''
+}: AsyncAutocompleteProps) {
+    const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
     const [options, setOptions] = useState<AutocompleteOption[]>([]);
     const [loading, setLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +50,7 @@ export default function AsyncAutocomplete({ label, placeholder, value, onChange,
 
     // Efeito de busca com debounce
     useEffect(() => {
-        if (!isOpen) return;
+        if (!isOpen || disabled) return;
 
         const timer = setTimeout(async () => {
             setLoading(true);
@@ -52,7 +66,7 @@ export default function AsyncAutocomplete({ label, placeholder, value, onChange,
         }, 500);
 
         return () => clearTimeout(timer);
-    }, [searchTerm, isOpen, fetcher]);
+    }, [searchTerm, isOpen, fetcher, disabled]);
 
     function handleSelect(option: AutocompleteOption) {
         setSearchTerm(option.label); // Mostra o nome no input
@@ -61,7 +75,7 @@ export default function AsyncAutocomplete({ label, placeholder, value, onChange,
     }
 
     return (
-        <div ref={wrapperRef} className="relative w-full">
+        <div ref={wrapperRef} className="relative w-full" data-selected-value={value ?? ''}>
             <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
             <div className="relative">
                 <input
@@ -69,17 +83,22 @@ export default function AsyncAutocomplete({ label, placeholder, value, onChange,
                     value={searchTerm}
                     onChange={(e) => {
                         setSearchTerm(e.target.value);
+                        onInputChange?.(e.target.value);
                         setIsOpen(true);
                     }}
-                    onFocus={() => setIsOpen(true)}
+                    onFocus={() => {
+                        if (!disabled) setIsOpen(true);
+                    }}
                     placeholder={placeholder}
-                    className="w-full rounded-md border border-gray-300 p-2 pl-8 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    disabled={disabled}
+                    required={required}
+                    className="w-full rounded-md border border-gray-300 p-2 pl-8 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-100"
                 />
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
             </div>
 
             {/* Dropdown de Resultados */}
-            {isOpen && (
+            {isOpen && !disabled && (
                 <div className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto">
                     {loading ? (
                         <div className="p-4 flex items-center justify-center text-sm text-gray-500">

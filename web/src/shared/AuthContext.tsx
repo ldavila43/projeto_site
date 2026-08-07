@@ -21,9 +21,8 @@ export function AuthProvider({ children, initialData }: Props) {
             throw new Error('Perfil inválido');
         }
 
-        setPerfilAtivo(perfil);
-
         await actionAlterarPerfil(novoPerfil)
+        setPerfilAtivo(perfil);
     }
     return (
         <AuthContext.Provider

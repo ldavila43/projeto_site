@@ -8,7 +8,6 @@ export type MetadadosPaginacao = {
 export type FiltrosBase = {
     page?: string;
     limit?: string;
-    [key: string]: any;
 };
 
 export type CampoFiltroConfig<TFiltros> =

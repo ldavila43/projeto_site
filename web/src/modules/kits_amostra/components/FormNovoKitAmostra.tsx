@@ -5,10 +5,10 @@ import { Save } from 'lucide-react';
 import Card from '@/src/shared/components/Card';
 import AsyncAutocomplete from '@/src/shared/components/AsyncAutocomplete';
 import { buscarDadosTiposKitAmostra } from '@/src/modules/tipos_kit_amostra/tiposKitAmostraActions';
-import { buscarDadosOperadores } from '@/src/modules/operadores/operadoresActions';
 import { cadastrarKitAmostra } from '../kitsAmostraActions';
 import { STATUS_KITS } from '../KitsAmostraDTO';
 import { useCadastroKitAmostra } from '../useCadastroKitAmostra';
+import SeletorPessoa from '@/src/modules/pessoas/components/SeletorPessoa';
 
 interface FormNovoKitAmostraProps {
     onSucesso: () => void;
@@ -30,20 +30,6 @@ export default function FormNovoKitAmostra({ onSucesso }: FormNovoKitAmostraProp
         return resposta.tiposKit.map((tipo) => ({
             id: tipo.idTipoKit,
             label: `${tipo.materialColeta} — ${tipo.tipoAmostra}`
-        }));
-    }, []);
-
-    const buscarResponsaveis = useCallback(async (busca: string) => {
-        const resposta = await buscarDadosOperadores({
-            nomeOperador: busca,
-            status: 'ATIVO',
-            limit: '10',
-            page: '1'
-        });
-
-        return resposta.dados.map((operador) => ({
-            id: operador.idOperador,
-            label: operador.nomeOperador
         }));
     }, []);
 
@@ -108,14 +94,14 @@ export default function FormNovoKitAmostra({ onSucesso }: FormNovoKitAmostraProp
                     </div>
 
                     <div>
-                        <label htmlFor="codApoio" className="mb-1 block text-sm font-medium text-gray-700">
-                            Código de apoio
+                        <label htmlFor="codigoBarras" className="mb-1 block text-sm font-medium text-gray-700">
+                            Código de barras
                         </label>
                         <input
-                            id="codApoio"
+                            id="codigoBarras"
                             type="text"
-                            value={form.codApoio ?? ''}
-                            onChange={(evento) => alterarCampo('codApoio', evento.target.value)}
+                            value={form.codigoBarras ?? ''}
+                            onChange={(evento) => alterarCampo('codigoBarras', evento.target.value)}
                             className={classeCampo}
                         />
                     </div>
@@ -165,23 +151,11 @@ export default function FormNovoKitAmostra({ onSucesso }: FormNovoKitAmostraProp
                     </div>
 
                     <div className="md:col-span-2">
-                        <AsyncAutocomplete
-                            key={form.idResponsavel || 'sem-responsavel'}
-                            label="Responsável"
-                            placeholder="Buscar operador responsável..."
+                        <SeletorPessoa
+                            label="Pessoa responsável"
                             value={form.idResponsavel ?? ''}
-                            onChange={(id) => alterarCampo('idResponsavel', String(id))}
-                            fetcher={buscarResponsaveis}
+                            onChange={(idPessoa) => alterarCampo('idResponsavel', idPessoa)}
                         />
-                        {form.idResponsavel && (
-                            <button
-                                type="button"
-                                onClick={() => alterarCampo('idResponsavel', '')}
-                                className="mt-2 text-sm text-red-600 hover:text-red-800"
-                            >
-                                Remover responsável
-                            </button>
-                        )}
                     </div>
                 </div>
 

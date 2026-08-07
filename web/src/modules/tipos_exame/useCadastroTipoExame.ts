@@ -12,7 +12,10 @@ export function useCadastroTipoExame(onSubmitAction: (dados: RequestPostTipoExam
     });
     const [salvando, setSalvando] = useState(false);
 
-    function handleFieldChange(campo: keyof RequestPostTipoExame, valor: any) {
+    function handleFieldChange<K extends keyof RequestPostTipoExame>(
+        campo: K,
+        valor: RequestPostTipoExame[K]
+    ) {
         setForm(prev => ({ ...prev, [campo]: valor }));
     }
 

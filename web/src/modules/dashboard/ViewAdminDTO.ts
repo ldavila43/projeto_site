@@ -1,7 +1,7 @@
 
 export interface SolicitacoesPeriodo{
     periodo: string,
-    solicitacoes: Number
+    solicitacoes: number
 }
 
 export interface Estatisticas{

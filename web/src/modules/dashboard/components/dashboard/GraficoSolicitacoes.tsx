@@ -29,8 +29,8 @@ export function GraficoSolicitacoes({ solicitacoesIni, anosDisponiveis, anoDefau
             try {
                 const resultado = await buscarSolicitacoesAdmin(ano);
                 setSolicitacoes(resultado.solicitacoesPeriodo!);
-            } catch (error) {
-                
+            } catch {
+                setSolicitacoes([]);
             } finally {
                 setCarregando(false);
             }

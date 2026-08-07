@@ -5,6 +5,7 @@ import { useCadastroTipoExame } from '../useCadastroTipoExame';
 import { Save } from 'lucide-react';
 import { criarTipoExame } from '@/src/modules/tipos_exame/tiposExameActions';
 import { buscarDadosCategoriasExames } from '@/src/modules/categorias_exame/categoriasExameAction';
+import { StatusGenerico } from '@/src/shared/utils/StatusEnum';
 
 interface PropsTemplateTipoExame {
     onSucesso: () => void
@@ -32,7 +33,7 @@ export default function TemplateNovoTipoExame( {onSucesso}: PropsTemplateTipoExa
                         label="Categoria do Exame"
                         placeholder="Buscar categoria..."
                         value={form.idCategoriaExame || ''}
-                        onChange={(id, label) => handleFieldChange('idCategoriaExame', Number(id))}
+                        onChange={(id) => handleFieldChange('idCategoriaExame', Number(id))}
                         fetcher={async (search) => {
                             const res = await buscarDadosCategoriasExames({ nome: search, limit: '5' });
                             return res.categorias.map(cat => ({ id: cat.idCategoria, label: cat.descricao }));
@@ -42,7 +43,10 @@ export default function TemplateNovoTipoExame( {onSucesso}: PropsTemplateTipoExa
                         <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                         <select
                             value={form.status}
-                            onChange={(e) => handleFieldChange('status', e.target.value)}
+                            onChange={(e) => handleFieldChange(
+                                'status',
+                                e.target.value as StatusGenerico
+                            )}
                             className="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         >
                             <option value="ATIVO">Ativo</option>

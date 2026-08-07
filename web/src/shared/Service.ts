@@ -1,81 +1,98 @@
-export type ApiError = {
-    error: {
-        code: string;
-        message: string;
-        details?: unknown;
-    };
+import { CorpoErroApi, ErroApi } from './ErroApi';
+
+export type MetodoHttp = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
+function obterUrl(rota: string): URL {
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    if (!baseUrl) {
+        throw new Error('NEXT_PUBLIC_API_BASE_URL não configurada');
+    }
+
+    return new URL(rota.startsWith('/') ? rota : `/${rota}`, baseUrl);
+}
+
+function adicionarQuery(url: URL, payload: object): void {
+    Object.entries(payload).forEach(([chave, valor]) => {
+        if (valor === undefined || valor === null || valor === '') return;
+
+        const valorSerializado = valor instanceof Date
+            ? valor.toISOString()
+            : String(valor);
+
+        url.searchParams.set(chave, valorSerializado);
+    });
+}
+
+function removerNulos<T>(valor: T): T {
+    if (valor instanceof Date) return valor;
+    if (Array.isArray(valor)) return valor.map(removerNulos) as T;
+
+    if (valor !== null && typeof valor === 'object') {
+        return Object.fromEntries(
+            Object.entries(valor)
+                .filter(([, item]) => item !== null && item !== undefined)
+                .map(([chave, item]) => [chave, removerNulos(item)])
+        ) as T;
+    }
+
+    return valor;
+}
+
+async function lerResposta<T>(response: Response): Promise<T> {
+    const texto = await response.text();
+
+    if (!texto) return undefined as T;
+
+    try {
+        return JSON.parse(texto) as T;
+    } catch {
+        throw new ErroApi(
+            'Resposta inválida do servidor',
+            'INVALID_API_RESPONSE',
+            response.status
+        );
+    }
 }
 
 export async function fetchAutenticado<T>(
-    metodo: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+    metodo: MetodoHttp,
     rota: string,
     token: string,
     perfilAtivo?: string | null,
     payload?: object
 ): Promise<T> {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
-    const url = new URL(rota, baseUrl);
+    const url = obterUrl(rota);
+    const possuiBody = metodo !== 'GET' && metodo !== 'DELETE';
 
-    console.log(perfilAtivo);
-    
-    const config: RequestInit = {
+    if (payload && !possuiBody) {
+        adicionarQuery(url, payload);
+    }
+
+    const response = await fetch(url, {
         method: metodo,
+        cache: 'no-store',
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
             ...(perfilAtivo ? { 'x-perfil-ativo': perfilAtivo } : {})
-        }
-    };
+        },
+        ...(payload && possuiBody
+            ? { body: JSON.stringify(removerNulos(payload)) }
+            : {})
+    });
 
-    if (payload) {
-        if (metodo === 'GET' || metodo === 'DELETE') {
-            Object.entries(payload).forEach(([key, value]) => {
-                if (value !== undefined && value !== null && value !== '') {
-                    url.searchParams.append(key, String(value));
-                }
-            });
-        } else {
-            config.body = JSON.stringify(removerNulos(payload));
-            console.log(removerNulos(payload));
-        }
-    }
-
-    const response = await fetch(url.toString(), config);
-
-    let result: T | ApiError;
-    try {
-        const text = await response.text();
-        result = text ? JSON.parse(text) : {} as T;
-        console.log(JSON.stringify(result, null, 2));
-    } catch {
-        throw new Error('Resposta inválida do servidor');
-    }
+    const resultado = await lerResposta<T | CorpoErroApi>(response);
 
     if (!response.ok) {
-        const erro = result as ApiError;
-        throw new Error(
-            erro.error?.message ?? 'Erro desconhecido ao comunicar com a API'
+        const erro = resultado as CorpoErroApi | undefined;
+        throw new ErroApi(
+            erro?.error?.message ?? 'Erro ao comunicar com a API',
+            erro?.error?.code ?? 'API_ERROR',
+            response.status,
+            erro?.error?.details ?? []
         );
     }
 
-    return result as T;
-}
-
-function removerNulos<T>(obj: T): T {
-    if (obj instanceof Date) {
-        return obj;
-    }
-    if (Array.isArray(obj)) {
-        return obj.map(removerNulos) as T;
-    }
-
-    if (obj !== null && typeof obj === 'object') {
-        return Object.fromEntries(
-            Object.entries(obj)
-                .filter(([, value]) => value !== null && value !== undefined)
-                .map(([key, value]) => [key, removerNulos(value)])
-        ) as T;
-    }
-
-    return obj;
+    return resultado as T;
 }

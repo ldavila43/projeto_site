@@ -1,5 +1,9 @@
 import { fetchAutenticado } from '@/src/shared/Service'
-import { PacienteResponse, FiltrosBuscaPaciente } from '@/src/modules/pacientes/PacientesDTO'
+import { PacienteResponse, FiltrosBuscaPaciente, RequestPostPaciente } from '@/src/modules/pacientes/PacientesDTO'
+
+interface RespostaCadastroPaciente {
+    message: string;
+}
 
 export async function servicoGetPacientes(
     token: string,
@@ -13,4 +17,18 @@ export async function servicoGetPacientes(
         perfilAtivo,
         filtros
     )
+}
+
+export async function servicoPostPaciente(
+    token: string,
+    perfilAtivo: string,
+    dados: RequestPostPaciente
+): Promise<RespostaCadastroPaciente> {
+    return fetchAutenticado(
+        'POST',
+        '/pacientes/cadastro',
+        token,
+        perfilAtivo,
+        dados
+    );
 }

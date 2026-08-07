@@ -1,28 +1,20 @@
 import CadastroDTO from '@/src/modules/auth/CadastroDTO';
+import { fetchAutenticado } from '@/src/shared/Service';
 
-const url_usuarios = process.env.NEXT_PUBLIC_URL_BACKEND_USERS!;
+interface RespostaCadastroUsuario {
+    message: string;
+}
 
-export async function registrarUsuario(dados: CadastroDTO) {
-    const response = await fetch(
-        url_usuarios,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dados)
-        }
+export async function registrarUsuario(
+    token: string,
+    perfilAtivo: string,
+    dados: CadastroDTO
+): Promise<RespostaCadastroUsuario> {
+    return fetchAutenticado(
+        'POST',
+        '/users',
+        token,
+        perfilAtivo,
+        dados
     );
-
-    let result;
-    try{
-        result = await response.json();
-    } catch {
-        throw new Error('Resposta inválida do servidor');
-    }
-    if (!response.ok) {
-        throw new Error(
-            typeof result === "string" ? result : result?.error || "Erro desconhecido"
-        );
-    }
-    return result?.message;
 }

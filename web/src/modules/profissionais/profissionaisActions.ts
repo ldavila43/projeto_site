@@ -1,28 +1,23 @@
 'use server'
-import { cookies } from 'next/headers';
-import { servicoGetProfissionais } from './profissionaisService';
-import { FiltrosBuscaProfissional, ProfissionaisResponse } from './profissionaisDTO';
 
-export async function executarComSessao<T>(
-    funcaoServico: (
-        token: string,
-        perfilAtivo: string,
-        filtros: FiltrosBuscaProfissional
-    ) => Promise<T>,
-    filtros: FiltrosBuscaProfissional
-): Promise<T> {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('session')?.value;
-    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? ''
-    if (!token) {
-        throw new Error("Sem token válido");
-    }
-
-    return funcaoServico(token, perfilAtivo, filtros);
-};
+import { servicoGetProfissionais, servicoPostProfissional } from './profissionaisService';
+import { FiltrosBuscaProfissional, ProfissionaisResponse, RequestPostProfissional } from './profissionaisDTO';
+import { obterSessao } from '@/src/shared/server/sessao';
+import { PERFIS } from '@/src/shared/utils/PerfisEnum';
 
 export async function buscarDadosProfissionais(
     filtros: FiltrosBuscaProfissional
 ): Promise<ProfissionaisResponse> {
-    return executarComSessao(servicoGetProfissionais, filtros);
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR]
+    });
+    return servicoGetProfissionais(token, String(perfilAtivo), filtros);
+}
+
+export async function cadastrarProfissional(dados: RequestPostProfissional): Promise<string> {
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR]
+    });
+    const resposta = await servicoPostProfissional(token, String(perfilAtivo), dados);
+    return resposta.message;
 }

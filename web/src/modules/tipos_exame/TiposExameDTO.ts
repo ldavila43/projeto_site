@@ -1,11 +1,13 @@
 
+import { StatusGenerico } from '@/src/shared/utils/StatusEnum';
+
 
 export interface TipoExame {
     idTipoExame: number,
     descricao: string,
-    status: string,
-    idCategoriaExame: number,
-    categoriaExame: number
+    status: StatusGenerico,
+    idCategoriaExame: number | null,
+    categoriaExame: string | null
 }
 
 export interface Metadados {
@@ -20,7 +22,7 @@ export interface ResponseGetTiposExame {
 
 export interface RequestGetTiposExame {
     descricao?: string,
-    status?: string,
+    status?: StatusGenerico | '',
     categoriaExame?: string,
     limit?: string,
     page?: string
@@ -31,6 +33,6 @@ export interface RequestPostTipoExame {
     caminhoImagem?: string,
     caminhoIcone?: string,
     caminhoLogo?: string,
-    status?: string,
+    status?: StatusGenerico,
     idCategoriaExame?: number
 }

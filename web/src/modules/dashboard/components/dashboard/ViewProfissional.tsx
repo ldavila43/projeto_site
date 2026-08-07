@@ -1,45 +1,37 @@
 'use client'
 import { GraficoBarrasEmpilhadas } from '@/src/shared/components/GraficoBarrasEmpilhadas'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Card from '@/src/shared/components/Card';
 import { buscarDadosProfissionais } from '@/src/modules/dashboard/dashBoardActions';
 import { DashProfissionaisDTO } from '@/src/modules/dashboard/ViewProfissionaisDTO'
 import { transformarExamesParaGrafico } from '@/src/shared/utils/transformarExames'
 
-export function ViewProfissional() {
-    const [dados, setDados] = useState<DashProfissionaisDTO | null>(null);
-    const [carregando, setCarregando] = useState(true);
-    const [idPaciente, setIdPaciente] = useState();
+interface ViewProfissionalProps {
+    dadosIni: DashProfissionaisDTO;
+    dataIniInicial: string;
+    dataFimInicial: string;
+}
+
+export function ViewProfissional({
+    dadosIni,
+    dataIniInicial,
+    dataFimInicial
+}: ViewProfissionalProps) {
+    const [dados, setDados] = useState<DashProfissionaisDTO>(dadosIni);
+    const [carregando, setCarregando] = useState(false);
     const { dadosTransformados, tiposUnicos } = dados
         ? transformarExamesParaGrafico(dados.exames)
         : { dadosTransformados: [], tiposUnicos: [] };
-    const [dataIni, setDataIni] = useState(
-        new Date(new Date().getFullYear(), 0, 1)
-            .toISOString()
-            .split('T')[0]
-    );
-    const [dataFim, setDataFim] = useState(
-        new Date()
-            .toISOString()
-            .split('T')[0]
-    );
+    const [dataIni, setDataIni] = useState(dataIniInicial);
+    const [dataFim, setDataFim] = useState(dataFimInicial);
 
-    useEffect(() => {
-        async function carregarDados() {
-            try {
-                const resultado: DashProfissionaisDTO = await buscarDadosProfissionais(idPaciente, dataIni, dataFim);
-                setDados(resultado);
-            } catch (error) {
-                console.error("Erro ao buscar dados:", error);
-            } finally {
-                setCarregando(false);
-            }
+    async function carregarDados() {
+        setCarregando(true);
+        try {
+            setDados(await buscarDadosProfissionais(undefined, dataIni, dataFim));
+        } finally {
+            setCarregando(false);
         }
-        carregarDados();
-    }, [idPaciente, dataIni, dataFim]);
-
-    if (carregando) {
-        return <div>Carregando estatísticas...</div>;
     }
 
     return (
@@ -73,8 +65,8 @@ export function ViewProfissional() {
                         <input
                             id="data-ini"
                             type="date"
-                            defaultValue={dataIni}
-                            onBlur={(e) => setDataIni(e.target.value)}
+                            value={dataIni}
+                            onChange={(e) => setDataIni(e.target.value)}
                             className="border border-gray-300 rounded-md p-1.5 text-sm"
                         >
                         </input>
@@ -82,11 +74,20 @@ export function ViewProfissional() {
                         <input
                             id="data-fim"
                             type="date"
-                            defaultValue={dataFim}
-                            onBlur={(e) => setDataFim(e.target.value)}
+                            value={dataFim}
+                            min={dataIni}
+                            onChange={(e) => setDataFim(e.target.value)}
                             className="border border-gray-300 rounded-md p-1.5 text-sm"
                         >
                         </input>
+                        <button
+                            type="button"
+                            onClick={carregarDados}
+                            disabled={carregando}
+                            className="rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white disabled:opacity-50"
+                        >
+                            {carregando ? 'Atualizando...' : 'Atualizar'}
+                        </button>
                     </div>
                     <GraficoBarrasEmpilhadas
                         dados={dadosTransformados}

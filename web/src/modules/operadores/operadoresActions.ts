@@ -1,49 +1,30 @@
 'use server'
-import { cookies } from 'next/headers';
+
 import { servicoGetOperadores, servicoGetRotas, servicoGetPerfis } from './OperadoresService';
-import { OperadoresResponse, FiltroBuscaOperadores, ResponseRotasPerfil } from './operadoresDTO';
+import {
+    OperadoresResponse,
+    FiltroBuscaOperadores,
+    ResponseRotasPerfil,
+    ResponseGetPerfis
+} from './operadoresDTO';
+import { obterSessao } from '@/src/shared/server/sessao';
+import { PERFIS } from '@/src/shared/utils/PerfisEnum';
 
-export async function executarComSessao<T>(
-    funcaoServico: (
-        token: string,
-        perfilAtivo: string,
-        filtros: FiltroBuscaOperadores
-    ) => Promise<T>,
-    filtros: FiltroBuscaOperadores
-): Promise<T> {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('session')?.value;
-    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? ''
-    if (!token) {
-        throw new Error("Sem token válido");
-    }
-
-    return funcaoServico(token, perfilAtivo, filtros);
-}
-;
-export async function buscarDadosOperadores (
+export async function buscarDadosOperadores(
     filtros: FiltroBuscaOperadores
 ): Promise<OperadoresResponse> {
-    return executarComSessao(servicoGetOperadores, filtros);
-};
-
-export async function buscaRotasOperadores (): Promise<ResponseRotasPerfil> {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('session')?.value;
-    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
-    if (!token) {
-        throw new Error("Sem token válido")
-    }
-
-    return servicoGetRotas(token, perfilAtivo);
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR]
+    });
+    return servicoGetOperadores(token, String(perfilAtivo), filtros);
 }
 
-export async function buscaPerfisOperador() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('session')?.value;
-    if(!token) {
-        throw new Error("Sem token válido");
-    }
+export async function buscaRotasOperadores(): Promise<ResponseRotasPerfil> {
+    const { token, perfilAtivo } = await obterSessao();
+    return servicoGetRotas(token, String(perfilAtivo));
+}
 
+export async function buscaPerfisOperador(): Promise<ResponseGetPerfis> {
+    const { token } = await obterSessao({ exigirPerfil: false });
     return servicoGetPerfis(token);
 }

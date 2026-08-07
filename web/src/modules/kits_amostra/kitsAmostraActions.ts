@@ -1,46 +1,115 @@
 'use server'
-import { cookies } from 'next/headers';
-import { servicoGetKits, servicoPostKit } from './kitsAmostraService';
-import { ResponseGetKits, RequestGetKits, RequestPostKitAmostra } from './KitsAmostraDTO';
+
+import {
+    servicoDeleteKit,
+    servicoGetKits,
+    servicoPatchKit,
+    servicoPostKit
+} from './kitsAmostraService';
+import {
+    ResponseGetKits,
+    RequestGetKits,
+    RequestPatchKitAmostra,
+    RequestPostKitAmostra,
+    ResultadoExclusaoKit
+} from './KitsAmostraDTO';
+import { obterSessao } from '@/src/shared/server/sessao';
 import { PERFIS } from '@/src/shared/utils/PerfisEnum';
+import { ErroApi } from '@/src/shared/ErroApi';
 
-export async function executarComSessao<T, D>(
-    funcaoServico: (
-        token: string,
-        perfilAtivo: string,
-        dados: D
-    ) => Promise<T>,
-    dados: D
-): Promise<T> {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('session')?.value;
-    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
+const PERFIS_KITS = [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR] as const;
 
-    if (!token) {
-        throw new Error("Sem token válido");
-    }
-    if (!perfilAtivo) {
-        throw new Error("Perfil ativo não informado");
+function permiteExclusaoForcada(erro: ErroApi): boolean {
+    if (
+        erro.codigo !== 'KIT_HAS_DEPENDENCIES'
+        || Array.isArray(erro.detalhes)
+    ) {
+        return false;
     }
 
-    return funcaoServico(token, perfilAtivo, dados);
+    const possuiAmostras = 'amostras' in erro.detalhes;
+    return !possuiAmostras;
 }
 
-export async function buscarDadosKitsAmostra (
+export async function buscarDadosKitsAmostra(
     filtros: RequestGetKits
 ): Promise<ResponseGetKits> {
-    return executarComSessao(servicoGetKits, filtros);
+    const { token, perfilAtivo } = await obterSessao({ perfisPermitidos: PERFIS_KITS });
+    return servicoGetKits(token, String(perfilAtivo), filtros);
 }
 
-export async function cadastrarKitAmostra(
-    dados: RequestPostKitAmostra
-): Promise<void> {
-    const cookieStore = await cookies();
-    const perfilAtivo = Number(cookieStore.get('x-perfil-ativo')?.value);
+export async function cadastrarKitAmostra(dados: RequestPostKitAmostra): Promise<string> {
+    const { token, perfilAtivo } = await obterSessao({ perfisPermitidos: PERFIS_KITS });
+    const resposta = await servicoPostKit(token, String(perfilAtivo), dados);
+    return resposta.message;
+}
 
-    if (perfilAtivo !== PERFIS.ADMINISTRADOR && perfilAtivo !== PERFIS.COLABORADOR) {
-        throw new Error("Perfil sem permissão para cadastrar kits de amostra");
+async function executarAtualizacaoKit(
+    idKit: number,
+    dados: RequestPatchKitAmostra
+): Promise<string> {
+    if (!Number.isInteger(idKit) || idKit <= 0) {
+        throw new Error('Kit inválido');
+    }
+    if (!Object.values(dados).some((valor) => valor !== undefined && valor !== '')) {
+        throw new Error('Informe ao menos um campo para atualização');
     }
 
-    return executarComSessao(servicoPostKit, dados);
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: PERFIS_KITS
+    });
+    const resposta = await servicoPatchKit(
+        token,
+        String(perfilAtivo),
+        idKit,
+        dados
+    );
+    return resposta.message;
+}
+
+export async function atualizarKitAmostra(
+    idKit: number,
+    dados: RequestPatchKitAmostra
+): Promise<string> {
+    return executarAtualizacaoKit(idKit, dados);
+}
+
+export async function excluirKitAmostra(
+    idKit: number,
+    forcar = false
+): Promise<ResultadoExclusaoKit> {
+    if (!Number.isInteger(idKit) || idKit <= 0) {
+        return {
+            sucesso: false,
+            mensagem: 'Kit inválido',
+            permiteForcar: false
+        };
+    }
+
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR]
+    });
+    const exclusaoForcada = forcar === true;
+
+    try {
+        const resposta = await servicoDeleteKit(
+            token,
+            String(perfilAtivo),
+            idKit,
+            exclusaoForcada
+        );
+        return {
+            sucesso: true,
+            mensagem: resposta.message
+        };
+    } catch (erro) {
+        if (erro instanceof ErroApi) {
+            return {
+                sucesso: false,
+                mensagem: erro.message,
+                permiteForcar: permiteExclusaoForcada(erro)
+            };
+        }
+        throw erro;
+    }
 }

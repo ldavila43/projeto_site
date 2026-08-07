@@ -2,19 +2,19 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
 
-export interface GraficoBarrasProps {
-    dados: any[];
+export interface GraficoBarrasProps<T extends object> {
+    dados: T[];
     chaveX: string;
     chaveY: string;
     corBarra?: string;
 }
 
-export function GraficoBarrasGenerico({
+export function GraficoBarrasGenerico<T extends object>({
     dados,
     chaveX,
     chaveY,
     corBarra = "#3b82f6"
-}: GraficoBarrasProps) {
+}: GraficoBarrasProps<T>) {
     return (
         <div className="w-full h-72 mt-4">
             <ResponsiveContainer width="100%" height="100%">

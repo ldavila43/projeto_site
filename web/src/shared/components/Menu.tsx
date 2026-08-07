@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Rota } from '@/src/modules/operadores/operadoresDTO';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
@@ -11,11 +11,8 @@ export default function MenuItem({ rota, abaAtual }: { rota: Rota; abaAtual: str
     const isSubRotaAtiva = hasSubMenus && rota.subMenus!.some(sub => abaAtual === sub.href);
     const isActiveContext = isExatamenteAtivo || isSubRotaAtiva;
 
-    const [isOpen, setIsOpen] = useState(isActiveContext);
-
-    useEffect(() => {
-        if (isActiveContext) setIsOpen(true);
-    }, [isActiveContext]);
+    const [isOpen, setIsOpen] = useState(false);
+    const menuAberto = isOpen || isActiveContext;
 
     const baseClasses = "flex items-center justify-between w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors";
     const inactiveClasses = "text-gray-300 hover:bg-blue-900/50 hover:text-white";
@@ -39,10 +36,10 @@ export default function MenuItem({ rota, abaAtual }: { rota: Rota; abaAtual: str
                 className={`${baseClasses} ${isActiveContext ? activeClasses : inactiveClasses}`}
             >
                 <span>{rota.label}</span>
-                {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                {menuAberto ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
             </button>
 
-            {isOpen && (
+            {menuAberto && (
                 <div className="flex flex-col gap-1 pl-4 mt-1 border-l border-gray-700/50 ml-4">
                     
                     <Link

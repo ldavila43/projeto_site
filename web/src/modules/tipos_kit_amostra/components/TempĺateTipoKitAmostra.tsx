@@ -1,5 +1,4 @@
 'use client'
-import { useState } from 'react';
 import TemplateListagem from '@/src/shared/components/TemplateListagem';
 import { useListagem } from '@/src/shared/hooks/useListagem';
 import { ColunaTabela } from '@/src/shared/components/TabelaDados';
@@ -38,8 +37,6 @@ const camposFiltro: CampoFiltroConfig<RequestGetTiposKit>[] = [
 ];
 
 export default function ViewTiposKitAmostra({ dadosIni }: { dadosIni: ResponseGetTiposKit }) {
-    const [modalAberto, setModalAberto] = useState(false);
-
     const listagem = useListagem<RequestGetTiposKit, ResponseGetTiposKit, TiposKitAmostra>({
         funcao: buscarDadosTiposKitAmostra,
         filtrosIniciais: { materialColeta: '', status: '', tipoAmostra: '', limit: '10', page: '1' },
@@ -60,12 +57,13 @@ export default function ViewTiposKitAmostra({ dadosIni }: { dadosIni: ResponseGe
                 dados={listagem.dados}
                 metadados={listagem.metadados}
                 carregando={listagem.carregando}
+                erro={listagem.erro}
                 filtros={listagem.filtros}
                 onChangeFiltro={listagem.handleChange}
                 onPesquisar={listagem.handlePesquisar}
+                onLimparFiltros={listagem.handleLimparFiltros}
                 onMudarPagina={listagem.handlePagina}
                 onMudarLimite={listagem.handleLimite}
-                acaoHeader={{ label: 'Novo Tipo de Kit de Amostra', onClick: () => setModalAberto(true) }}
                 mensagemVazio="Nenhum tipo de kit amostra encontrado."
             />
         </div>

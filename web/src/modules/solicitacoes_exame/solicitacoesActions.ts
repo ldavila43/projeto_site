@@ -1,37 +1,98 @@
 'use server'
-import { cookies } from 'next/headers';
+
 import { criarSolicitacao, servicoBuscaExames } from './solicitacoesService';
-import { RequestPostSolicitacaoDTO, RequestSolicitacoesDTO, GetSolicitacoesResponse } from './SolicitacaoDTO';
+import {
+    DetalhesConflitoAmostraGenetica,
+    RequestPostSolicitacaoDTO,
+    RequestSolicitacoesDTO,
+    GetSolicitacoesResponse,
+    ResultadoCadastroSolicitacao
+} from './SolicitacaoDTO';
+import { obterSessao } from '@/src/shared/server/sessao';
+import { PERFIS } from '@/src/shared/utils/PerfisEnum';
+import { ErroApi } from '@/src/shared/ErroApi';
 
-
-export async function executarComSessao<T, D>(
-    funcaoServico: (
-        token: string,
-        perfilAtivo: string,
-        dados: D
-    ) => Promise<T>,
-    dados: D
-): Promise<T> {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('session')?.value;
-    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
-
-    if (!token) {
-        throw new Error("Sem token válido");
+function obterConflitoAmostraGenetica(
+    erro: ErroApi
+): DetalhesConflitoAmostraGenetica | null {
+    if (
+        erro.codigo !== 'AMOSTRA_GENETICA_EXISTENTE'
+        || Array.isArray(erro.detalhes)
+        || typeof erro.detalhes !== 'object'
+        || erro.detalhes === null
+        || !Array.isArray(erro.detalhes.amostras)
+        || typeof erro.detalhes.tipoAmostra !== 'object'
+        || erro.detalhes.tipoAmostra === null
+    ) {
+        return null;
     }
 
-    return funcaoServico(token, perfilAtivo, dados);
-};
+    return erro.detalhes as unknown as DetalhesConflitoAmostraGenetica;
+}
 
-export async function criarSolicitacaoExame (
-    filtros: RequestPostSolicitacaoDTO
-): Promise<string> {
-    return executarComSessao(criarSolicitacao, filtros);
-};
+export async function criarSolicitacaoExame(
+    dados: RequestPostSolicitacaoDTO
+): Promise<ResultadoCadastroSolicitacao> {
+    if (!dados.idPaciente) {
+        throw new Error('Selecione o paciente.');
+    }
+    if (dados.idsTiposExames.length === 0) {
+        throw new Error('Selecione ao menos um exame.');
+    }
+    if (!Number.isInteger(dados.quantidadeKits) || dados.quantidadeKits < 0) {
+        throw new Error('A quantidade de kits deve ser um inteiro não negativo.');
+    }
 
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR]
+    });
 
-export async function buscarDadosSolicitacoes (
+    const dadosNormalizados: RequestPostSolicitacaoDTO = {
+        ...dados,
+        idProfissional: dados.idProfissional || undefined,
+        dataSolicitacao: dados.dataSolicitacao || undefined,
+        statusSolicitacao: perfilAtivo === PERFIS.ADMINISTRADOR
+            ? dados.statusSolicitacao
+            : undefined,
+        protocolo: dados.protocolo?.trim() || undefined,
+        idKits: dados.idKits?.length ? dados.idKits : undefined
+    };
+
+    try {
+        const resposta = await criarSolicitacao(
+            token,
+            String(perfilAtivo),
+            dadosNormalizados
+        );
+        return {
+            sucesso: true,
+            mensagem: resposta.message
+        };
+    } catch (erro) {
+        if (erro instanceof ErroApi) {
+            const conflito = obterConflitoAmostraGenetica(erro);
+            if (conflito) {
+                return {
+                    sucesso: false,
+                    tipo: 'CONFLITO_AMOSTRA_GENETICA',
+                    conflito
+                };
+            }
+
+            return {
+                sucesso: false,
+                tipo: 'ERRO_API',
+                codigo: erro.codigo,
+                mensagem: erro.message
+            };
+        }
+        throw erro;
+    }
+}
+
+export async function buscarDadosSolicitacoes(
     filtros: RequestSolicitacoesDTO
 ): Promise<GetSolicitacoesResponse> {
-    return executarComSessao(servicoBuscaExames, filtros);
-};
+    const { token, perfilAtivo } = await obterSessao();
+    return servicoBuscaExames(token, String(perfilAtivo), filtros);
+}

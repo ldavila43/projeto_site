@@ -6,7 +6,7 @@ const FORM_INICIAL: RequestPostKitAmostra = {
     idTipoKit: 0,
     local: '',
     codigoLote: '',
-    codApoio: '',
+    codigoBarras: '',
     dataValidade: '',
     status: 'INATIVO',
     idResponsavel: '',
@@ -14,7 +14,7 @@ const FORM_INICIAL: RequestPostKitAmostra = {
 };
 
 export function useCadastroKitAmostra(
-    cadastrar: (dados: RequestPostKitAmostra) => Promise<void>
+    cadastrar: (dados: RequestPostKitAmostra) => Promise<string>
 ) {
     const [form, setForm] = useState<RequestPostKitAmostra>(FORM_INICIAL);
     const [salvando, setSalvando] = useState(false);
@@ -30,14 +30,14 @@ export function useCadastroKitAmostra(
         setSalvando(true);
 
         try {
-            await cadastrar({
+            const mensagem = await cadastrar({
                 ...form,
                 local: form.local?.trim() || undefined,
-                codApoio: form.codApoio?.trim() || undefined,
+                codigoBarras: form.codigoBarras?.trim() || undefined,
                 idResponsavel: form.idResponsavel || undefined,
                 dataAtivacao: form.dataAtivacao || undefined
             });
-            alert('Kit de amostra cadastrado com sucesso!');
+            alert(mensagem);
             onSucesso();
         } catch (erro) {
             const mensagem = erro instanceof Error

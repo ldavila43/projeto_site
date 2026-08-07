@@ -17,8 +17,6 @@ export default function Sidebar({ menuAberto, linksDaSidebar }: SidebarProps) {
 
     if (!contexto) return null;
 
-    console.log("ROTAS RECEBIDAS:", JSON.stringify(linksDaSidebar.rotas, null, 2));
-
     
     return (
         <aside

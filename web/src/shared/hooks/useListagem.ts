@@ -24,20 +24,23 @@ export function useListagem<TFiltros extends FiltrosBase, TResponse, TItem>({
 }: UseListagemConfig<TFiltros, TResponse, TItem>) {
     const [resposta, setResposta] = useState<TResponse | null>(initialDados ?? null);
     const [carregando, setCarregando] = useState(false);
+    const [erro, setErro] = useState<string | null>(null);
     const [filtros, setFiltros] = useState<TFiltros>(filtrosIniciais);
     const primeiraRenderizacao = useRef(true);
+    const filtrosIniciaisRef = useRef(filtrosIniciais);
 
     const carregarDados = useCallback(async (filtrosParaBuscar: TFiltros) => {
         setCarregando(true);
+        setErro(null);
         try {
             const filtrosLimpos = Object.fromEntries(
-                Object.entries(filtrosParaBuscar).filter(([_, valor]) => valor !== '' && valor !== undefined)
+                Object.entries(filtrosParaBuscar).filter((entrada) => entrada[1] !== '' && entrada[1] !== undefined)
             ) as TFiltros;
 
             const resultado = await funcao(filtrosLimpos);
             setResposta(resultado);
         } catch (error) {
-            console.error('Erro ao buscar dados da listagem:', error);
+            setErro(error instanceof Error ? error.message : 'Erro ao carregar dados.');
         } finally {
             setCarregando(false);
         }
@@ -45,9 +48,12 @@ export function useListagem<TFiltros extends FiltrosBase, TResponse, TItem>({
 
     useEffect(() => {
         if (initialDados === undefined) {
-            carregarDados(filtrosIniciais);
+            const timer = setTimeout(() => {
+                void carregarDados(filtrosIniciaisRef.current);
+            }, 0);
+            return () => clearTimeout(timer);
         }
-    }, []);
+    }, [carregarDados, initialDados]);
 
     const camposParaObservar = camposAutoBusca
         ?? (Object.keys(filtrosIniciais) as (keyof TFiltros)[]).filter(c => c !== 'page' && c !== 'limit');
@@ -61,11 +67,22 @@ export function useListagem<TFiltros extends FiltrosBase, TResponse, TItem>({
         }
         const timer = setTimeout(() => carregarDados(filtros), debounceMs);
         return () => clearTimeout(timer);
-    }, [chaveAutoBusca]);
+    }, [autoBuscar, carregarDados, chaveAutoBusca, debounceMs, filtros]);
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         const { name, value } = e.target;
         setFiltros(prev => ({ ...prev, [name]: value, page: '1' }));
+    }
+
+    function alterarFiltro<Campo extends keyof TFiltros>(
+        campo: Campo,
+        valor: TFiltros[Campo]
+    ) {
+        setFiltros((anteriores) => ({
+            ...anteriores,
+            [campo]: valor,
+            page: '1'
+        }));
     }
 
     function handleLimite(novoLimite: string) {
@@ -86,6 +103,18 @@ export function useListagem<TFiltros extends FiltrosBase, TResponse, TItem>({
         carregarDados(filtros);
     }
 
+    function handleLimparFiltros() {
+        const filtrosLimpos = {
+            ...filtrosIniciaisRef.current,
+            page: '1'
+        };
+        setFiltros(filtrosLimpos);
+
+        if (!autoBuscar) {
+            void carregarDados(filtrosLimpos);
+        }
+    }
+
     function recarregar() {
         return carregarDados(filtros);
     }
@@ -94,11 +123,14 @@ export function useListagem<TFiltros extends FiltrosBase, TResponse, TItem>({
         dados: resposta ? obterItens(resposta) : [],
         metadados: resposta ? obterMetadados(resposta) : { totalRegistros: 0, totalPaginas: 1 },
         carregando,
+        erro,
         filtros,
+        alterarFiltro,
         handleChange,
         handleLimite,
         handlePagina,
         handlePesquisar,
+        handleLimparFiltros,
         recarregar
     };
 }

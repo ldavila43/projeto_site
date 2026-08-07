@@ -1,7 +1,9 @@
+import { StatusGenerico } from '@/src/shared/utils/StatusEnum';
+
 export interface FiltroBuscaOperadores {
     nomeOperador?: string,
     documentoOperador?: string,
-    status?: string,
+    status?: StatusGenerico | '',
     idPerfil?: string,
     limit?: string,
     offset?: string,
@@ -43,5 +45,7 @@ export interface Perfil {
 }
 
 export interface ResponseGetPerfis {
-    perfis: Perfil[]
+    dados: {
+        perfis: Perfil[]
+    }
 }

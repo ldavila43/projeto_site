@@ -4,8 +4,8 @@ export interface PacienteDTO{
     idPessoa: string,
     idPaciente: string,
     nome: string,
-    criadoEm: Date,
-    atualizadoEm: Date
+    criadoEm: string,
+    atualizadoEm?: string
 }
 
 export type FiltrosBuscaPaciente = {
@@ -31,4 +31,24 @@ export interface PacienteRequest {
 export interface PacienteResponse {
     metadados: PacientesMetadados,
     pacientes: PacienteDTO[]
+}
+
+export interface RequestPostPaciente {
+    nome: string;
+    documentoIdentificacao: string;
+    dataNascimento: string;
+    email: string;
+    telefone: string;
+    tipoContato: string;
+    cep: string;
+    logradouro: string;
+    numero: string;
+    bairro: string;
+    idCidade: number;
+    tipoEndereco: string;
+    estadoCivil: string;
+    profissao: string;
+    complemento: string;
+    sexo: 'MASCULINO' | 'FEMININO';
+    etnia: string;
 }

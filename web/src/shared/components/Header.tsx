@@ -105,6 +105,8 @@ export default function Header({ toggleMenu }: { toggleMenu: () => void }) {
                 titulo="Meus Dados"
                 funcaoBusca={buscarMeusDados}
                 funcaoEdicao={atualizarMeusDados}
+                permitirEditarDocumento={false}
+                permitirEditarContatos
             />
         </>
     )

@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useContext } from 'react';
+import { useContext } from 'react';
 import { AuthContext } from '@/src/shared/AuthContext';
 
 export default function LayoutDashboard({ children }: Readonly<{children: React.ReactNode}> ) {

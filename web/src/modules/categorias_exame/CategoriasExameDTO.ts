@@ -1,17 +1,19 @@
 
+import { StatusGenerico } from '@/src/shared/utils/StatusEnum';
+
 export interface FiltrosGetCategorias {
     idCategoria?: string,
     nome?: string,
-    status?: string,
+    status?: StatusGenerico | '',
     limit?: string,
     page?: string
 }
 
 export interface CategoriaExame {
-    idCategoria: string,
+    idCategoria: number,
     descricao: string,
-    texto: string,
-    status: string
+    texto: string | null,
+    status: StatusGenerico
 }
 
 export interface Metadados {

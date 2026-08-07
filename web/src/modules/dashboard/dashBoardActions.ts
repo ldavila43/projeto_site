@@ -1,107 +1,74 @@
 'use server'
-import { cookies } from 'next/headers';
-import { DashPacientesDTO } from '@/src/modules/dashboard/ViewPacienteDTO';
-import { DashAdminDTO } from '@/src/modules/dashboard/ViewAdminDTO';
-import { DashProfissionaisDTO } from '@/src/modules/dashboard/ViewProfissionaisDTO'
-import { servicoDashboard, servicoDashboardProfissional, servicoDashboardAdmin, servicoSolicitacoesDashboardAdmin } from '@/src/modules/dashboard/DashService';
+
+import {
+    servicoCardsLaboratorio,
+    servicoDashboard,
+    servicoDashboardAdmin,
+    servicoDashboardProfissional,
+    servicoGraficoLaboratorio,
+    servicoSolicitacoesDashboardAdmin
+} from './DashService';
+import { DashPacientesDTO } from './ViewPacienteDTO';
+import { DashAdminDTO } from './ViewAdminDTO';
+import { DashProfissionaisDTO } from './ViewProfissionaisDTO';
+import {
+    CardsResumoLaboratorio,
+    FiltrosGraficoLaboratorio,
+    GraficoExamesLaboratorio
+} from './ViewColaboradorDTO';
+import { obterSessao } from '@/src/shared/server/sessao';
+import { PERFIS } from '@/src/shared/utils/PerfisEnum';
 
 export async function buscarDadosPacientes(): Promise<DashPacientesDTO> {
-    const cookieStore = await cookies();
-
-    const token = cookieStore.get('session')?.value;
-    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
-    if (!token) {
-        throw new Error(
-            "Sem token válido"
-        )
-    }
-    try {
-        const dadosDash: DashPacientesDTO = await servicoDashboard(token, perfilAtivo);
-
-        return dadosDash;
-    } catch (erro) {
-            if (erro instanceof Error) {
-                throw new Error(erro.message);
-            }
-            throw new Error("Erro desconhecido ao buscar dados");
-        }
-
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.PACIENTE]
+    });
+    return servicoDashboard(token, String(perfilAtivo));
 }
 
-
-export async function buscarDadosProfissionais(idPaciente?: string, dataIni?: string, dataFim?: string): Promise<DashProfissionaisDTO> {
-    const cookieStore = await cookies();
-
-    const token = cookieStore.get('session')?.value;
-    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
-
-    if (!token) {
-        throw new Error(
-            "Sem token válido"
-        )
-    }
-    try {
-        const dadosDash: DashProfissionaisDTO = await servicoDashboardProfissional(
-            token,
-            perfilAtivo,
-            idPaciente,
-            dataIni,
-            dataFim
-        );
-
-        return dadosDash;
-    } catch (erro) {
-        if (erro instanceof Error) {
-            throw new Error(erro.message);
-        }
-        throw new Error("Erro desconhecido ao buscar dados");
-    }
+export async function buscarDadosProfissionais(
+    idPaciente?: string,
+    dataIni?: string,
+    dataFim?: string
+): Promise<DashProfissionaisDTO> {
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.PROFISSIONAL]
+    });
+    return servicoDashboardProfissional(
+        token,
+        String(perfilAtivo),
+        idPaciente,
+        dataIni,
+        dataFim
+    );
 }
 
 export async function buscarDadosAdmin(ano?: string): Promise<DashAdminDTO> {
-    const cookieStore = await cookies();
-
-    const token = cookieStore.get('session')?.value;
-    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
-
-    if (!token) {
-        throw new Error(
-            'Sem token válido'
-        );
-    }
-
-    try {
-        const dadosDash: DashAdminDTO = await servicoDashboardAdmin(token, perfilAtivo, ano);
-
-        return dadosDash;
-    } catch(erro) {
-        if (erro instanceof Error) {
-            throw new Error(erro.message);
-        }
-        throw new Error("Erro desconhecido ao buscar dados");
-    }
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR]
+    });
+    return servicoDashboardAdmin(token, String(perfilAtivo), ano);
 }
 
 export async function buscarSolicitacoesAdmin(ano?: string): Promise<DashAdminDTO> {
-    const cookieStore = await cookies();
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR]
+    });
+    return servicoSolicitacoesDashboardAdmin(token, String(perfilAtivo), ano);
+}
 
-    const token = cookieStore.get('session')?.value;
-    const perfilAtivo = cookieStore.get('x-perfil-ativo')?.value ?? '';
+export async function buscarCardsLaboratorio(): Promise<CardsResumoLaboratorio> {
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR]
+    });
+    return servicoCardsLaboratorio(token, String(perfilAtivo));
+}
 
-    if (!token) {
-        throw new Error(
-            'Sem token válido'
-        );
-    }
-
-    try {
-        const dadosDash: DashAdminDTO = await servicoSolicitacoesDashboardAdmin(token, perfilAtivo, ano);
-
-        return dadosDash;
-    } catch(erro) {
-        if (erro instanceof Error) {
-            throw new Error(erro.message);
-        }
-        throw new Error("Erro desconhecido ao buscar dados");
-    }
+export async function buscarGraficoLaboratorio(
+    filtros: FiltrosGraficoLaboratorio
+): Promise<GraficoExamesLaboratorio> {
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR]
+    });
+    return servicoGraficoLaboratorio(token, String(perfilAtivo), filtros);
 }

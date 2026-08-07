@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import TemplateListagem from '@/src/shared/components/TemplateListagem';
 import { useListagem } from '@/src/shared/hooks/useListagem';
 import { ColunaTabela } from '@/src/shared/components/TabelaDados';
@@ -7,6 +7,8 @@ import { CampoFiltroConfig } from '@/src/shared/types/listagem';
 import ModalNovoTipoExame from './ModalNovoTipoExame';
 import { buscarDadosTiposExame } from '@/src/modules/tipos_exame/tiposExameActions';
 import { TipoExame, ResponseGetTiposExame, RequestGetTiposExame } from '../TiposExameDTO';
+import { AuthContext } from '@/src/shared/AuthContext';
+import { PERFIS } from '@/src/shared/utils/PerfisEnum';
 
 const colunas: ColunaTabela<TipoExame>[] = [
     { chave: 'idTipoExame', titulo: 'ID', className: 'w-16 text-gray-500' },
@@ -40,6 +42,9 @@ const camposFiltro: CampoFiltroConfig<RequestGetTiposExame>[] = [
 
 export default function ViewTiposExame({ dadosIni }: { dadosIni: ResponseGetTiposExame }) {
     const [modalAberto, setModalAberto] = useState(false);
+    const contexto = useContext(AuthContext);
+    const podeCadastrar = contexto?.perfilAtivo === PERFIS.ADMINISTRADOR
+        || contexto?.perfilAtivo === PERFIS.COLABORADOR;
 
     const listagem = useListagem<RequestGetTiposExame, ResponseGetTiposExame, TipoExame>({
         funcao: buscarDadosTiposExame,
@@ -61,12 +66,16 @@ export default function ViewTiposExame({ dadosIni }: { dadosIni: ResponseGetTipo
                 dados={listagem.dados}
                 metadados={listagem.metadados}
                 carregando={listagem.carregando}
+                erro={listagem.erro}
                 filtros={listagem.filtros}
                 onChangeFiltro={listagem.handleChange}
                 onPesquisar={listagem.handlePesquisar}
+                onLimparFiltros={listagem.handleLimparFiltros}
                 onMudarPagina={listagem.handlePagina}
                 onMudarLimite={listagem.handleLimite}
-                acaoHeader={{ label: 'Novo Tipo de Exame', onClick: () => setModalAberto(true) }}
+                acaoHeader={podeCadastrar
+                    ? { label: 'Novo Tipo de Exame', onClick: () => setModalAberto(true) }
+                    : undefined}
                 mensagemVazio="Nenhum tipo de exame encontrado."
             />
 

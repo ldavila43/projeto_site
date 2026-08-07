@@ -6,5 +6,6 @@ export interface Perfil {
 export interface PayloadUsuario {
     id: string;
     nome: string,
-    perfis: Perfil[]
+    perfis: Perfil[],
+    exp?: number
 }

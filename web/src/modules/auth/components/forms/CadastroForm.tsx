@@ -3,11 +3,11 @@ import { useState } from 'react';
 import CadastroDTO from '@/src/modules/auth/CadastroDTO';
 import FormDTO from '@/src/modules/auth/FormDTO';
 import { validarCadastro } from '@/src/shared/utils/ValidacoesCadastro';
-import { registrarUsuario } from '@/src/modules/auth/UserService';
+import { cadastrarUsuario } from '@/src/modules/auth/authActions';
 import Input from '@/src/shared/components/Input';
 import Button from '@/src/shared/components/button';
 
-export default function CadastroForm() {
+export default function CadastroForm({ onSucesso }: { onSucesso?: () => void }) {
     const [formData, setFormData] = useState<FormDTO>({
         nome: '',
         dataNascimento: '',
@@ -31,7 +31,7 @@ export default function CadastroForm() {
             setSubmitted(true);
             const cadastro: CadastroDTO = validarCadastro(formData);
             
-            const mensagem: string = await registrarUsuario(cadastro);
+            const mensagem = await cadastrarUsuario(cadastro);
             setFormData({
                 nome: '',
                 dataNascimento: '',
@@ -42,6 +42,7 @@ export default function CadastroForm() {
                 confirmarSenha: ''
             });
             alert(mensagem);
+            onSucesso?.();
         } catch (erro) {
             alert(
                 erro instanceof Error
@@ -82,6 +83,7 @@ export default function CadastroForm() {
                     <i className="ti ti-user absolute left-3 text-gray-400 text-base pointer-events-none" />
                     <Input
                         required
+                        type="date"
                         name="dataNascimento"
                         className={`pl-9 ${submited && !formData.dataNascimento ? 'border-red-500' : ''}`}
                         value={formData.dataNascimento}
@@ -98,7 +100,7 @@ export default function CadastroForm() {
                     <i className="ti ti-user absolute left-3 text-gray-400 text-base pointer-events-none" />
                     <Input
                         required
-                        name="dataNascimento"
+                        name="documentoIdentificacao"
                         className={`pl-9 ${submited && !formData.documentoIdentificacao ? 'border-red-500' : ''}`}
                         value={formData.documentoIdentificacao}
                         onChange={handleChange}
@@ -118,8 +120,9 @@ export default function CadastroForm() {
                         onChange={handleChange}
                         className="w-full h-10 pl-9 pr-3 text-sm bg-gray-50 border border-gray-200 rounded-lg appearance-none focus:outline-none focus:border-[#2E6DA4] focus:ring-2 focus:ring-[#2E6DA4]/10"
                     >
-                        <option value="Masculino"> Masculino</option>
-                        <option value="Feminino">Feminino</option>
+                        <option value="">Selecione</option>
+                        <option value="MASCULINO">Masculino</option>
+                        <option value="FEMININO">Feminino</option>
                     </select>
                 </div>
             </div>

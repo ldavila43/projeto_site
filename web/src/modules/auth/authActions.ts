@@ -6,7 +6,10 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { jwtDecode } from 'jwt-decode';
 import { PayloadUsuario } from '@/src/shared/PayloadUsuario';
-import { obterPerfilPrioritario, PerfilID } from '@/src/shared/utils/PerfisEnum';
+import { obterPerfilPrioritario, PerfilID, PERFIS, isPerfilID } from '@/src/shared/utils/PerfisEnum';
+import CadastroDTO from './CadastroDTO';
+import { registrarUsuario } from './UserService';
+import { obterSessao } from '@/src/shared/server/sessao';
 
 type ResultadoLogin = {
     sucesso: boolean;
@@ -68,9 +71,15 @@ export async function actionLogout() {
 }
 
 export async function actionAlterarPerfil(novoPerfil: string, rotaDestino?: string) {
+    const { usuario } = await obterSessao({ exigirPerfil: false });
     const cookieStore = await cookies();
+    const perfil = Number(novoPerfil);
 
-    cookieStore.set('x-perfil-ativo', novoPerfil, {
+    if (!isPerfilID(perfil) || !usuario.perfis.some(({ id }) => id === perfil)) {
+        throw new Error('Perfil inválido para este usuário');
+    }
+
+    cookieStore.set('x-perfil-ativo', String(perfil), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -83,4 +92,12 @@ export async function actionAlterarPerfil(novoPerfil: string, rotaDestino?: stri
     } else {
         revalidatePath('/', 'layout');
     }
+}
+
+export async function cadastrarUsuario(dados: CadastroDTO): Promise<string> {
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR]
+    });
+    const resposta = await registrarUsuario(token, String(perfilAtivo), dados);
+    return resposta.message;
 }
