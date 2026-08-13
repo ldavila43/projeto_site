@@ -12,7 +12,9 @@ export interface KitAmostra {
     dataValidade: string,
     dataAtivacao?: string,
     responsavel: string | null,
-    disponivelParaEnvio: boolean
+    disponivelParaEnvio: boolean,
+    idTipoAmostra?: number,
+    nomeTipoAmostra?: string
 }
 
 export interface RequestGetKits {

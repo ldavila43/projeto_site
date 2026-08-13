@@ -2,8 +2,10 @@ import { fetchAutenticado } from '@/src/shared/Service'
 import { normalizarListaTexto } from '@/src/shared/utils/normalizarListaTexto';
 import {
     RequestPostSolicitacaoDTO,
+    RequestPostAmostraSolicitacaoDTO,
     RequestSolicitacoesDTO,
     GetSolicitacoesResponse,
+    ResponseOpcoesAmostraSolicitacao,
     SolicitacoesExame
 } from './SolicitacaoDTO';
 
@@ -131,4 +133,47 @@ export async function criarSolicitacao(
         perfilAtivo,
         dados
     )
+}
+
+export async function vincularKitNaSolicitacao(
+    token: string,
+    perfilAtivo: string,
+    idSolicitacao: number,
+    idKit: number
+): Promise<{ message: string }> {
+    return fetchAutenticado(
+        'POST',
+        `/solicitacoes/${idSolicitacao}/kits`,
+        token,
+        perfilAtivo,
+        { idKit }
+    );
+}
+
+export async function criarAmostraNaSolicitacao(
+    token: string,
+    perfilAtivo: string,
+    idSolicitacao: number,
+    dados: RequestPostAmostraSolicitacaoDTO
+): Promise<{ message: string }> {
+    return fetchAutenticado(
+        'POST',
+        `/solicitacoes/${idSolicitacao}/amostras`,
+        token,
+        perfilAtivo,
+        dados
+    );
+}
+
+export async function servicoBuscarOpcoesAmostraSolicitacao(
+    token: string,
+    perfilAtivo: string,
+    idSolicitacao: number
+): Promise<ResponseOpcoesAmostraSolicitacao> {
+    return fetchAutenticado(
+        'GET',
+        `/solicitacoes/${idSolicitacao}/opcoes-amostra`,
+        token,
+        perfilAtivo
+    );
 }

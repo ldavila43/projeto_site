@@ -11,10 +11,14 @@ import {
 } from '@/src/shared/utils/StatusEnum';
 import type { StatusEnvio } from '@/src/shared/utils/StatusEnum';
 import type { KitAmostra } from '@/src/modules/kits_amostra/KitsAmostraDTO';
+import { formatarTipoAmostraKit } from '@/src/modules/kits_amostra/formatarKitAmostra';
 import { cadastrarEnvio } from '../enviosActions';
 
 interface FormCadastroEnvioProps {
-    kits: Pick<KitAmostra, 'idKit' | 'codBgk'>[];
+    kits: Pick<
+        KitAmostra,
+        'idKit' | 'codBgk' | 'idTipoAmostra' | 'nomeTipoAmostra'
+    >[];
     onSucesso: (mensagem: string) => void;
 }
 
@@ -111,9 +115,14 @@ export default function FormCadastroEnvio({
                     {kits.map((kit) => (
                         <span
                             key={kit.idKit}
-                            className="rounded-full border border-blue-200 bg-white px-3 py-1 text-sm text-blue-800"
+                            className="rounded-md border border-blue-200 bg-white px-3 py-2 text-sm text-blue-800"
                         >
-                            {kit.codBgk}
+                            <strong className="block">{kit.codBgk}</strong>
+                            {formatarTipoAmostraKit(kit) && (
+                                <span className="mt-0.5 block text-xs text-blue-700">
+                                    Tipo de amostra: {formatarTipoAmostraKit(kit)}
+                                </span>
+                            )}
                         </span>
                     ))}
                 </div>

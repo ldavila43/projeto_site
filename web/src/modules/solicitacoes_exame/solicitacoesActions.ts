@@ -1,12 +1,21 @@
 'use server'
 
-import { criarSolicitacao, servicoBuscaExames } from './solicitacoesService';
+import {
+    criarAmostraNaSolicitacao,
+    criarSolicitacao,
+    servicoBuscarOpcoesAmostraSolicitacao,
+    servicoBuscaExames,
+    vincularKitNaSolicitacao
+} from './solicitacoesService';
 import {
     DetalhesConflitoAmostraGenetica,
+    RequestPostAmostraSolicitacaoDTO,
     RequestPostSolicitacaoDTO,
     RequestSolicitacoesDTO,
     GetSolicitacoesResponse,
-    ResultadoCadastroSolicitacao
+    ResponseOpcoesAmostraSolicitacao,
+    ResultadoCadastroSolicitacao,
+    ResultadoAcaoSolicitacao
 } from './SolicitacaoDTO';
 import { obterSessao } from '@/src/shared/server/sessao';
 import { PERFIS } from '@/src/shared/utils/PerfisEnum';
@@ -69,6 +78,7 @@ export async function criarSolicitacaoExame(
             mensagem: resposta.message
         };
     } catch (erro) {
+        console.log(erro)
         if (erro instanceof ErroApi) {
             const conflito = obterConflitoAmostraGenetica(erro);
             if (conflito) {
@@ -95,4 +105,79 @@ export async function buscarDadosSolicitacoes(
 ): Promise<GetSolicitacoesResponse> {
     const { token, perfilAtivo } = await obterSessao();
     return servicoBuscaExames(token, String(perfilAtivo), filtros);
+}
+
+export async function vincularKitSolicitacao(
+    idSolicitacao: number,
+    idKit: number
+): Promise<ResultadoAcaoSolicitacao> {
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR]
+    });
+
+    try {
+        const resposta = await vincularKitNaSolicitacao(
+            token,
+            String(perfilAtivo),
+            idSolicitacao,
+            idKit
+        );
+        return {
+            sucesso: true,
+            mensagem: resposta.message
+        };
+    } catch (erro) {
+        if (erro instanceof ErroApi) {
+            return {
+                sucesso: false,
+                codigo: erro.codigo,
+                mensagem: erro.message
+            };
+        }
+        throw erro;
+    }
+}
+
+export async function criarAmostraSolicitacao(
+    idSolicitacao: number,
+    dados: RequestPostAmostraSolicitacaoDTO
+): Promise<ResultadoAcaoSolicitacao> {
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR]
+    });
+
+    try {
+        const resposta = await criarAmostraNaSolicitacao(
+            token,
+            String(perfilAtivo),
+            idSolicitacao,
+            dados
+        );
+        return {
+            sucesso: true,
+            mensagem: resposta.message
+        };
+    } catch (erro) {
+        if (erro instanceof ErroApi) {
+            return {
+                sucesso: false,
+                codigo: erro.codigo,
+                mensagem: erro.message
+            };
+        }
+        throw erro;
+    }
+}
+
+export async function buscarOpcoesAmostraSolicitacao(
+    idSolicitacao: number
+): Promise<ResponseOpcoesAmostraSolicitacao> {
+    const { token, perfilAtivo } = await obterSessao({
+        perfisPermitidos: [PERFIS.ADMINISTRADOR, PERFIS.COLABORADOR]
+    });
+    return servicoBuscarOpcoesAmostraSolicitacao(
+        token,
+        String(perfilAtivo),
+        idSolicitacao
+    );
 }

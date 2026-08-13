@@ -11,6 +11,7 @@ import { criarSolicitacaoExame } from '@/src/modules/solicitacoes_exame/solicita
 import { buscarDadosPacientes } from '@/src/modules/pacientes/pacientesActions';
 import { buscarDadosProfissionais } from '@/src/modules/profissionais/profissionaisActions';
 import { buscarDadosKitsAmostra } from '@/src/modules/kits_amostra/kitsAmostraActions';
+import { formatarResumoKitAmostra } from '@/src/modules/kits_amostra/formatarKitAmostra';
 import { buscarDadosTiposExame } from '@/src/modules/tipos_exame/tiposExameActions'
 import {
     formatarValorEnum,
@@ -269,11 +270,7 @@ export default function TemplateNovaSolicitacao({onSucesso}: PropsTemplateTipoEx
                                     const res = await buscarDadosKitsAmostra({ codBgk: search, limit: '5' });
                                     return res.kitsAmostra.map(kit => ({
                                         id: kit.idKit,
-                                        label: [
-                                            kit.codBgk,
-                                            kit.tipoKit ?? 'Tipo não informado',
-                                            formatarValorEnum(kit.status)
-                                        ].join(' — ')
+                                        label: formatarResumoKitAmostra(kit)
                                     }));
                                 }}
                             />
@@ -292,8 +289,8 @@ export default function TemplateNovaSolicitacao({onSucesso}: PropsTemplateTipoEx
                             </p>
                             <p className="mt-1 text-xs text-gray-500">
                                 A seleção é opcional e pode representar apenas parte da
-                                quantidade prevista. Os kits serão vinculados sem alterar
-                                seus responsáveis.
+                                quantidade prevista. Ao serem vinculados, os kits terão o
+                                paciente da solicitação definido como responsável.
                             </p>
                         </div>
                     </div>

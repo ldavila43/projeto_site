@@ -60,6 +60,53 @@ export type ResultadoCadastroSolicitacao =
         mensagem: string;
     };
 
+export type ResultadoAcaoSolicitacao =
+    | {
+        sucesso: true;
+        mensagem: string;
+    }
+    | {
+        sucesso: false;
+        codigo: string;
+        mensagem: string;
+    };
+
+export interface RequestPostAmostraSolicitacaoDTO {
+    idTipoAmostra: number;
+    idKit?: number;
+    observacoes?: string;
+    flagRecoleta: boolean;
+    flagPesquisa: boolean;
+    dataColeta: string;
+    dataRecebimento?: string;
+    identificacaoDosTubos?: string;
+}
+
+export interface KitOpcaoAmostraSolicitacao {
+    idKit: number;
+    codBgk: string;
+    status: 'INATIVO' | 'ATIVO';
+    elegivelParaUso: boolean;
+    motivosInelegibilidade: string[];
+}
+
+export interface OpcaoAmostraSolicitacao {
+    idTipoAmostra: number;
+    descricao: string;
+    situacao: 'NOVA' | 'RECOLETA' | 'CONTEMPLADA';
+    elegivelParaCriacao: boolean;
+    flagRecoletaObrigatoria: boolean;
+    motivosInelegibilidade: string[];
+    kits: KitOpcaoAmostraSolicitacao[];
+}
+
+export interface ResponseOpcoesAmostraSolicitacao {
+    idSolicitacao: number;
+    podeCriarAmostra: boolean;
+    motivosInelegibilidade: string[];
+    opcoes: OpcaoAmostraSolicitacao[];
+}
+
 
 export interface RequestSolicitacoesDTO {
     idPaciente?: string,

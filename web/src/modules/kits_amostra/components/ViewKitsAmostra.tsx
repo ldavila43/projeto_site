@@ -23,6 +23,7 @@ import { PERFIS } from '@/src/shared/utils/PerfisEnum';
 import FormCadastroEnvio from '@/src/modules/envios/components/FormCadastroEnvio';
 import SeletorPessoa from '@/src/modules/pessoas/components/SeletorPessoa';
 import { formatarData } from '@/src/shared/utils/formatarData';
+import { formatarTipoAmostraKit } from '../formatarKitAmostra';
 
 type OperacaoKit =
     | { tipo: 'editar'; kit: KitAmostra }
@@ -57,6 +58,11 @@ const colunasBase: ColunaTabela<KitAmostra>[] = [
     { chave: 'codLote', titulo: 'Lote', render: (kit) => kit.codLote || '-' },
     { chave: 'codigoBarras', titulo: 'Cód. Barras', render: (kit) => kit.codigoBarras || '-' },
     { chave: 'tipoKit', titulo: 'Tipo do Kit' },
+    {
+        chave: 'nomeTipoAmostra',
+        titulo: 'Tipo de Amostra',
+        render: (kit) => formatarTipoAmostraKit(kit) || '-'
+    },
     { chave: 'responsavel', titulo: 'Responsável', render: (kit) => kit.responsavel || '-' },
     {
         chave: 'dataAtivacao',

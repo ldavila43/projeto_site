@@ -1,5 +1,6 @@
 'use client'
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { FlaskConical, Link2 } from 'lucide-react';
 import TemplateListagem from '@/src/shared/components/TemplateListagem';
 import { useListagem } from '@/src/shared/hooks/useListagem';
 import ModalNovaSolicitacao from '@/src/modules/solicitacoes_exame/components/ModalNovaSolicitacao';
@@ -7,7 +8,6 @@ import { ColunaTabela } from '@/src/shared/components/TabelaDados';
 import { SolicitacoesExame, GetSolicitacoesResponse, RequestSolicitacoesDTO } from '../SolicitacaoDTO';
 import { CampoFiltroConfig } from '@/src/shared/types/listagem';
 import { buscarDadosSolicitacoes } from '@/src/modules/solicitacoes_exame/solicitacoesActions'
-import { useContext } from 'react';
 import { AuthContext } from '@/src/shared/AuthContext';
 import { PERFIS } from '@/src/shared/utils/PerfisEnum';
 import {
@@ -15,6 +15,8 @@ import {
     STATUS_SOLICITACOES
 } from '@/src/shared/utils/StatusEnum';
 import { formatarData } from '@/src/shared/utils/formatarData';
+import ModalVincularKitSolicitacao from './ModalVincularKitSolicitacao';
+import ModalCriarAmostraSolicitacao from './ModalCriarAmostraSolicitacao';
 
 const camposFiltro: CampoFiltroConfig<RequestSolicitacoesDTO>[] = [
     { tipo: 'data', name: 'dataIni', label: 'Data inicial da solicitação' },
@@ -59,56 +61,6 @@ const colunas: ColunaTabela<SolicitacoesExame>[] = [
     { chave: 'quantidadeExames', titulo: 'Qtd. Exames' },
     { chave: 'quantidadeKits', titulo: 'Qtd. Kits' },
     {
-        chave: 'kitsVinculados',
-        titulo: 'Cobertura por Tipo',
-        render: (solicitacao) => (
-            <div className="min-w-40 space-y-1 text-xs text-gray-600">
-                <p>
-                    Kits vinculados:{' '}
-                    <strong>{solicitacao.kitsVinculados}</strong>
-                </p>
-                <p>
-                    Kits pendentes:{' '}
-                    <strong>{solicitacao.kitsPendentes}</strong>
-                </p>
-                <p>
-                    Amostras vinculadas:{' '}
-                    <strong>{solicitacao.amostrasVinculadas}</strong>
-                </p>
-                <p>
-                    Amostras pendentes:{' '}
-                    <strong>{solicitacao.amostrasPendentes}</strong>
-                </p>
-            </div>
-        )
-    },
-    {
-        chave: 'podeVincularKit',
-        titulo: 'Disponibilidade',
-        render: (solicitacao) => (
-            <div className="flex min-w-40 flex-col items-start gap-1.5">
-                <span className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                    solicitacao.podeVincularKit
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-600'
-                }`}>
-                    {solicitacao.podeVincularKit
-                        ? 'Pode vincular kit'
-                        : 'Tipos de kit contemplados'}
-                </span>
-                <span className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                    solicitacao.podeCriarAmostra
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-gray-100 text-gray-600'
-                }`}>
-                    {solicitacao.podeCriarAmostra
-                        ? 'Pode criar amostra'
-                        : 'Tipos de amostra contemplados'}
-                </span>
-            </div>
-        )
-    },
-    {
         chave: 'statusSolicitacao',
         titulo: 'Status',
         render: (sol) => (
@@ -130,6 +82,12 @@ const colunas: ColunaTabela<SolicitacoesExame>[] = [
 export default function TemplateSolicitacoes({dadosIni}: { dadosIni: GetSolicitacoesResponse }) {
     const contexto = useContext(AuthContext);
     const [modalNovaSolicitacaoAberto, setModalNovaSolicitacaoAberto] = useState(false);
+    const [solicitacaoParaVinculo, setSolicitacaoParaVinculo] = useState<
+        SolicitacoesExame | null
+    >(null);
+    const [solicitacaoParaAmostra, setSolicitacaoParaAmostra] = useState<
+        SolicitacoesExame | null
+    >(null);
 
     const listagem = useListagem<RequestSolicitacoesDTO, GetSolicitacoesResponse, SolicitacoesExame>({
         funcao: buscarDadosSolicitacoes,
@@ -171,6 +129,43 @@ export default function TemplateSolicitacoes({dadosIni}: { dadosIni: GetSolicita
                 acaoHeader={podeCadastrar
                     ? { label: 'Nova Solicitação', onClick: () => setModalNovaSolicitacaoAberto(true) }
                     : undefined}
+                acoesExtra={podeCadastrar
+                    ? (solicitacao) => {
+                        if (
+                            !solicitacao.podeVincularKit
+                            && !solicitacao.podeCriarAmostra
+                        ) {
+                            return null;
+                        }
+
+                        return (
+                            <div className="flex flex-wrap justify-end gap-2">
+                                {solicitacao.podeVincularKit && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setSolicitacaoParaVinculo(solicitacao)}
+                                        className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+                                        title={`Vincular kit; ${solicitacao.kitsPendentes} pendente(s)`}
+                                    >
+                                        <Link2 className="h-3.5 w-3.5" />
+                                        Vincular kit ({solicitacao.kitsPendentes})
+                                    </button>
+                                )}
+                                {solicitacao.podeCriarAmostra && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setSolicitacaoParaAmostra(solicitacao)}
+                                        className="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
+                                        title={`Criar amostra; ${solicitacao.amostrasPendentes} pendente(s)`}
+                                    >
+                                        <FlaskConical className="h-3.5 w-3.5" />
+                                        Criar amostra ({solicitacao.amostrasPendentes})
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    }
+                    : undefined}
                 mensagemVazio="Nenhuma solicitação encontrada."
             />
             
@@ -179,6 +174,30 @@ export default function TemplateSolicitacoes({dadosIni}: { dadosIni: GetSolicita
                 onClose={() => setModalNovaSolicitacaoAberto(false)}
                 onSucesso={() => { setModalNovaSolicitacaoAberto(false); listagem.recarregar(); }}
             />
+
+            {solicitacaoParaVinculo && (
+                <ModalVincularKitSolicitacao
+                    solicitacao={solicitacaoParaVinculo}
+                    onClose={() => setSolicitacaoParaVinculo(null)}
+                    onSucesso={(mensagem) => {
+                        alert(mensagem);
+                        setSolicitacaoParaVinculo(null);
+                        void listagem.recarregar();
+                    }}
+                />
+            )}
+
+            {solicitacaoParaAmostra && (
+                <ModalCriarAmostraSolicitacao
+                    solicitacao={solicitacaoParaAmostra}
+                    onClose={() => setSolicitacaoParaAmostra(null)}
+                    onSucesso={(mensagem) => {
+                        alert(mensagem);
+                        setSolicitacaoParaAmostra(null);
+                        void listagem.recarregar();
+                    }}
+                />
+            )}
         </div>
     );
 }
