@@ -15,7 +15,6 @@ export function useCadastroSolicitacao(
         idPaciente: '',
         idProfissional: '',
         dataSolicitacao: new Date().toISOString(),
-        protocolo: '',
         quantidadeKits: 0,
         idKits: [],
         idsTiposExames: []

@@ -57,14 +57,16 @@ export async function criarSolicitacaoExame(
     });
 
     const dadosNormalizados: RequestPostSolicitacaoDTO = {
-        ...dados,
+        idPaciente: dados.idPaciente,
         idProfissional: dados.idProfissional || undefined,
         dataSolicitacao: dados.dataSolicitacao || undefined,
         statusSolicitacao: perfilAtivo === PERFIS.ADMINISTRADOR
             ? dados.statusSolicitacao
             : undefined,
-        protocolo: dados.protocolo?.trim() || undefined,
-        idKits: dados.idKits?.length ? dados.idKits : undefined
+        quantidadeKits: dados.quantidadeKits,
+        idKits: dados.idKits?.length ? dados.idKits : undefined,
+        idsTiposExames: dados.idsTiposExames,
+        decisaoAmostraGenetica: dados.decisaoAmostraGenetica
     };
 
     try {

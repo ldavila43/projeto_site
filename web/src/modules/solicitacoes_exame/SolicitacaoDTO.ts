@@ -14,7 +14,6 @@ export interface RequestPostSolicitacaoDTO {
     idProfissional?: string;
     dataSolicitacao?: string;
     statusSolicitacao?: StatusSolicitacao;
-    protocolo?: string;
     quantidadeKits: number;
     idKits?: number[];
     idsTiposExames: number[];

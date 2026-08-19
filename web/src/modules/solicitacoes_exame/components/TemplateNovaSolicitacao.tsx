@@ -137,19 +137,6 @@ export default function TemplateNovaSolicitacao({onSucesso}: PropsTemplateTipoEx
                 <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
                         <label className="mb-1 block text-sm font-medium text-gray-700">
-                            Protocolo da solicitação
-                        </label>
-                        <input
-                            type="text"
-                            value={form.protocolo ?? ''}
-                            onChange={(e) => handleFieldChange('protocolo', e.target.value)}
-                            className={classeCampo}
-                            placeholder="Protocolo opcional"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">
                             Data da solicitação
                         </label>
                         <input
